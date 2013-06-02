@@ -8,6 +8,7 @@
 #include <QClipboard>
 #include <QKeySequence>
 #include <QApplication>
+#include <QUrl>
 #include "json/json.h"
 #include "qxt/qxtglobalshortcut.h"
 
@@ -25,10 +26,12 @@ public:
     explicit Clipper(QObject *parent = 0);
     ~Clipper();
     void googleLinkShorten(QString link);
+    void pastebinPublish(QString text);
 
 private slots:
     void onLinkShortened(QNetworkReply* reply);
     void onShortcutActivated();
+    void onPasteLinkReady(QNetworkReply *reply);
 
 private:
     Ui::Clipper *ui;
