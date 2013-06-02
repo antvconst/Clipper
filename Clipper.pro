@@ -15,9 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
            clipper.cpp \
            json/json.cpp \
+    clipperapis.cpp \
+    tnyczoptions.cpp
 
 HEADERS  += clipper.h \
-    json/json.h
+    json/json.h \
+    clipperapis.h \
+    tnyczoptions.h
 
 # Qxt
 !macx:SOURCES += qxt/qxtglobalshortcut.cpp
@@ -26,3 +30,12 @@ HEADERS  += clipper.h \
     qxt/qxtglobal.h
 win32:SOURCES += qxt/qxtglobalshortcut_win.cpp
 unix:!macx:SOURCES += qxt/qxtglobalshortcut_x11.cpp
+
+RESOURCES += \
+    Clipper.qrc
+
+FORMS += \
+    tnyczoptions.ui \
+    clipper.ui
+
+QMAKE_CXXFLAGS += -std=c++11

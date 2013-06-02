@@ -1,56 +1,44 @@
 #include "clipper.h"
 
-Clipper::Clipper(QObject *parent) :
-    QObject(parent)
+Clipper::Clipper(QWidget *parent) :
+    QWidget(parent)
 {
+    this->hide();
     clipboard = QApplication::clipboard();
-    pastebinPublish("test paste");
-    //QxtGlobalShortcut *shortcut = new QxtGlobalShortcut(QKeySequence("F6"));
-    //connect(shortcut, SIGNAL(activated()), this, SLOT(onShortcutActivated()));
+    api = new ClipperAPIs();
+    tray = new QSystemTrayIcon(this);
+    tray->setIcon(QIcon(":/clipper.ico"));
+    tray->show();
+    QxtGlobalShortcut *linkShortenShortcut = new QxtGlobalShortcut(QKeySequence("F6"));
+    QxtGlobalShortcut *tnyczPublishShortcut = new QxtGlobalShortcut(QKeySequence("F7"));
+
+    connect(linkShortenShortcut, SIGNAL(activated()), this, SLOT(onLinkShortenShortcutActivated()));
+    connect(tnyczPublishShortcut, SIGNAL(activated()), this, SLOT(onTnyczPublishShortcutActivated()));
+    connect(api, SIGNAL(linkReady(QString)), this, SLOT(linkToClipboard(QString)));
 }
 
 Clipper::~Clipper()
 {
 }
 
-void Clipper::googleLinkShorten(QString link)
+void Clipper::onLinkShortenShortcutActivated()
 {
-    QNetworkAccessManager *manager = new QNetworkAccessManager();
-    QNetworkRequest request;
-    request.setUrl(QUrl("https://www.googleapis.com/urlshortener/v1/url"));
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    QVariantMap args;
-    args["longUrl"] = link;
-
-    manager->post(request, JSON::serialize(QVariant(args), 4));
-    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onLinkShortened(QNetworkReply*)));
+    api->googleLinkShorten(clipboard->text(QClipboard::Selection));
 }
 
-void Clipper::onLinkShortened(QNetworkReply* reply)
+void Clipper::onTnyczPublishShortcutActivated()
 {
-    QVariantMap response = JSON::parse(reply->readAll()).toMap();
-    clipboard->setText(response["id"].toString());
+    TnyczOptions *tnycz = new TnyczOptions();
+    tnycz->show();
+    tnycz->setPasteText(clipboard->text(QClipboard::Selection));
+    connect(tnycz, SIGNAL(optionsReady(QString,QString,QString,bool,bool,bool)), api,
+            SLOT(tnyczPublish(QString,QString,QString,bool,bool,bool)));
 }
 
-void Clipper::onShortcutActivated()
+void Clipper::linkToClipboard(QString link)
 {
-    googleLinkShorten(clipboard->text(QClipboard::Selection));
+    clipboard->setText(link);
+    tray->showMessage("", "Link is copied to your clipboard.");
 }
 
-void Clipper::pastebinPublish(QString text)
-{
-    QNetworkAccessManager *manager = new QNetworkAccessManager();
-    QNetworkRequest request;
-
-    request.setUrl(QUrl("http://pastebin.com/api/api_post.php"));
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "text/plain");
-    QByteArray requestData("api_option=paste&api_dev_key=a7bf92a1483fcce3f01f4b629bc9a9&api_paste_code="+QUrl::toPercentEncoding(text));
-    qDebug() << requestData;
-    manager->post(request, requestData);
-    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onPasteLinkReady(QNetworkReply*)));
-}
-
-void Clipper::onPasteLinkReady(QNetworkReply *reply)
-{
-    qDebug() << reply->readAll();
-}
+// 1039
