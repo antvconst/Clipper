@@ -4,8 +4,8 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    a.setQuitOnLastWindowClosed(false);
+    QApplication app(argc, argv);
+    app.setQuitOnLastWindowClosed(false);
     Clipper *w = new Clipper();
-    return a.exec();
+    return app.exec();
 }

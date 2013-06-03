@@ -31,6 +31,10 @@
   <property name="windowTitle">
    <string>Tny.cz Publish Options</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="Clipper.qrc">
+    <normaloff>:/clipper.ico</normaloff>:/clipper.ico</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QFormLayout" name="formLayout">
@@ -107,6 +111,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="Clipper.qrc"/>
+ </resources>
  <connections/>
 </ui>

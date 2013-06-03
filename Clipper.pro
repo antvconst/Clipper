@@ -16,12 +16,14 @@ SOURCES += main.cpp\
            clipper.cpp \
            json/json.cpp \
     clipperapis.cpp \
-    tnyczoptions.cpp
+    tnyczoptions.cpp \
+    hotkey/qhotkeyedit.cpp
 
 HEADERS  += clipper.h \
     json/json.h \
     clipperapis.h \
-    tnyczoptions.h
+    tnyczoptions.h \
+    hotkey/qhotkeyedit.h
 
 # Qxt
 !macx:SOURCES += qxt/qxtglobalshortcut.cpp
@@ -36,6 +38,7 @@ RESOURCES += \
 
 FORMS += \
     tnyczoptions.ui \
-    clipper.ui
+    clipper.ui \
+    hotkey/qkeyedit.ui
 
 QMAKE_CXXFLAGS += -std=c++11

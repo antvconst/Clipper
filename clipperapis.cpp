@@ -24,7 +24,8 @@ void ClipperAPIs::onLinkShortened(QNetworkReply* reply)
     emit linkReady((response["id"].toString()));
 }
 
-void ClipperAPIs::tnyczPublish(QString text, QString title, QString password, bool is_code, bool is_private, bool is_protected)
+void ClipperAPIs::tnyczPublish
+(QString text, QString title, QString password, bool is_code, bool is_private, bool is_protected)
 {
     QNetworkAccessManager *manager = new QNetworkAccessManager();
     QNetworkRequest request(QUrl("http://tny.cz/api/create.json"));
@@ -45,5 +46,6 @@ void ClipperAPIs::tnyczPublish(QString text, QString title, QString password, bo
 
 void ClipperAPIs::onPasteLinkReady(QNetworkReply *reply)
 {
-    emit linkReady("http://tny.cz/"+JSON::parse(reply->readAll()).toMap()["result"].toMap()["response"].toString());
+    emit linkReady("http://tny.cz/"+JSON::parse(
+                       reply->readAll()).toMap()["result"].toMap()["response"].toString());
 }
