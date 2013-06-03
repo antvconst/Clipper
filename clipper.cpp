@@ -4,6 +4,12 @@ Clipper::Clipper(QWidget *parent) :
     QWidget(parent), ui(new Ui::Clipper)
 {
     ui->setupUi(this);
+
+    QRect screenGeometry = QApplication::desktop()->screenGeometry();
+    int x = (screenGeometry.width()-this->width()) / 2;
+    int y = (screenGeometry.height()-this->height()) / 2;
+    this->move(x, y);
+
     this->hide();
 
     settings = new QSettings();

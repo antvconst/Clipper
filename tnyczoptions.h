@@ -2,6 +2,7 @@
 #define TNYCZOPTIONS_H
 
 #include <QWidget>
+#include <QDesktopWidget>
 
 namespace Ui {
 class TnyczOptions;

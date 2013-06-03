@@ -6,6 +6,12 @@ TnyczOptions::TnyczOptions(QWidget *parent) :
     ui(new Ui::TnyczOptions)
 {
     ui->setupUi(this);
+
+    QRect screenGeometry = QApplication::desktop()->screenGeometry();
+    int x = (screenGeometry.width()-this->width()) / 2;
+    int y = (screenGeometry.height()-this->height()) / 2;
+    this->move(x, y);
+
     setWindowIcon(QIcon(":/three.ico"));
     connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
     connect(ui->publishButton, SIGNAL(clicked()), this, SLOT(returnPublishOptions()));
