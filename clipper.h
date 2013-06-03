@@ -9,6 +9,7 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QMenu>
+#include <QMap>
 #include <QPixmap>
 #include <QDesktopWidget>
 #include <QBuffer>
@@ -44,6 +45,7 @@ private slots:
     void saveSettings();
     void onTrayIconClicked(QSystemTrayIcon::ActivationReason reason);
     void makeScreenshot();
+    void initHotkeys();
 
 private:
     Ui::Clipper *ui;
@@ -53,6 +55,11 @@ private:
     QButtonGroup shortcutButtons;
     int button_id;
     QSettings *settings;
+
+    QMap<QString, QString> shortcuts;
+    QxtGlobalShortcut *linkShortenShortcut;
+    QxtGlobalShortcut *tnyczPublishShortcut;
+    QxtGlobalShortcut *screenshotShortcut;
 
 };
 

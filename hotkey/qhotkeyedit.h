@@ -4,6 +4,7 @@
 #include <QLineEdit>
 #include <QKeyEvent>
 #include <QDebug>
+#include <QDesktopWidget>
 #include <QRegExpValidator>
 
 #include "ui_qkeyedit.h"
