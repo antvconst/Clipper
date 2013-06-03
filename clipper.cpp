@@ -21,14 +21,18 @@ Clipper::Clipper(QWidget *parent) :
 
     shortcutButtons.addButton(ui->shortenLinkButton, 1);
     shortcutButtons.addButton(ui->publishPasteButton, 2);
+    shortcutButtons.addButton(ui->makeScreenshotButton, 3);
 
     QxtGlobalShortcut *linkShortenShortcut = new QxtGlobalShortcut(
                 QKeySequence(settings->value("Hotkeys/ShortenLink", "F6").toString()));
     QxtGlobalShortcut *tnyczPublishShortcut = new QxtGlobalShortcut(
                 QKeySequence(settings->value("Hotkeys/PastePublish", "F7").toString()));
+    QxtGlobalShortcut *screenshotShortcut = new QxtGlobalShortcut(
+                QKeySequence(settings->value("Hotkeys/Screenshot", "F8").toString()));
 
     ui->shortenLinkButton->setText(settings->value("Hotkeys/ShortenLink", "F6").toString());
     ui->publishPasteButton->setText(settings->value("Hotkeys/PastePublish", "F7").toString());
+    ui->makeScreenshotButton->setText(settings->value("Hotkeys/Screenshot", "F8").toString());
 
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveSettings()));
     connect(ui->clearButton, SIGNAL(clicked()), ui->listWidget, SLOT(clear()));
@@ -39,6 +43,7 @@ Clipper::Clipper(QWidget *parent) :
     connect(tnyczPublishShortcut, SIGNAL(activated()), this, SLOT(onTnyczPublishShortcutActivated()));
     connect(api, SIGNAL(linkReady(QString)), this, SLOT(linkToClipboard(QString)));
     connect(&shortcutButtons, SIGNAL(buttonClicked(int)), this, SLOT(onChangeHotkeyButtonClicked(int)));
+    connect(screenshotShortcut, SIGNAL(activated()), this, SLOT(makeScreenshot()));
 }
 
 Clipper::~Clipper()
@@ -89,6 +94,7 @@ void Clipper::saveSettings()
     settings->beginGroup("Hotkeys");
     settings->setValue("ShortenLink", ui->shortenLinkButton->text());
     settings->setValue("PastePublish", ui->publishPasteButton->text());
+    settings->setValue("Screenshot", ui->makeScreenshotButton->text());
     settings->endGroup();
 
 }
@@ -97,4 +103,14 @@ void Clipper::onTrayIconClicked(QSystemTrayIcon::ActivationReason reason)
 {
     if (reason == QSystemTrayIcon::DoubleClick)
         this->show();
+}
+
+void Clipper::makeScreenshot()
+{
+    QPixmap screenshot = QPixmap::grabWindow(QApplication::desktop()->winId());
+    QByteArray screenshotData;
+    QBuffer buffer(&screenshotData);
+    buffer.open(QIODevice::WriteOnly);
+    screenshot.save(&buffer, "PNG");
+    api->imageshackUpload(screenshotData);
 }

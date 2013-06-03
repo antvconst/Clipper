@@ -49,3 +49,49 @@ void ClipperAPIs::onPasteLinkReady(QNetworkReply *reply)
     emit linkReady("http://tny.cz/"+JSON::parse(
                        reply->readAll()).toMap()["result"].toMap()["response"].toString());
 }
+
+void ClipperAPIs::imageshackUpload(QByteArray &picture)
+{
+    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    QNetworkRequest request(QUrl("https://post.imageshack.us/upload_api.php"));
+    request.setRawHeader("Host", "imageshack.us");
+    request.setRawHeader("Content-type", "multipart/form-data, boundary=AyV04a");
+    request.setRawHeader("Cache-Control", "no-cache");
+    request.setRawHeader("Accept","*/*");
+
+    QByteArray requestData;
+
+    requestData.append("--AyV04a\r\n");
+    requestData.append("content-disposition: ");
+    requestData.append("form-data; name=\"key\"\r\n");
+    requestData.append("\r\n");
+    requestData.append("46GINSVY90936a01bc287a245cccc30026678653");
+    requestData.append("\r\n");
+
+    requestData.append("--AyV04a\r\n");
+    requestData.append("content-type: ");
+    requestData.append("image/png\r\n");
+    requestData.append("content-disposition: ");
+    requestData.append(QString("file; name=\"fileupload\"; filename=\"%1.png\"\r\n").arg(QTime::currentTime().toString()));
+    requestData.append("Content-Transfer-Encoding: binary\r\n");
+    requestData.append("\r\n");
+    requestData.append(picture);
+    requestData.append("\r\n");
+
+    requestData.append("--AyV04a\r\n");
+    requestData.append("content-disposition: ");
+    requestData.append("form-data; name=\"format\"\r\n");
+    requestData.append("\r\n");
+    requestData.append("json\r\n");
+    requestData.append("--AyV04a--");
+
+    manager->post(request, requestData);
+    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onImageshackUploaded(QNetworkReply*)));
+}
+
+void ClipperAPIs::onImageshackUploaded(QNetworkReply *response)
+{
+    QVariantMap responseMap = JSON::parse(response->readAll()).toMap();
+    QVariantMap linkMap = responseMap["links"].toMap();
+    emit linkReady(linkMap["image_link"].toString());
+}

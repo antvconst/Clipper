@@ -1,4 +1,4 @@
-#ifndef CLIPPER_H
+﻿#ifndef CLIPPER_H
 #define CLIPPER_H
 
 #include <QSettings>
@@ -9,6 +9,9 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QMenu>
+#include <QPixmap>
+#include <QDesktopWidget>
+#include <QBuffer>
 #include <QDebug>
 #include <QTime>
 #include <QAction>
@@ -40,6 +43,7 @@ private slots:
     void changeHotkey(QString hotkey);
     void saveSettings();
     void onTrayIconClicked(QSystemTrayIcon::ActivationReason reason);
+    void makeScreenshot();
 
 private:
     Ui::Clipper *ui;

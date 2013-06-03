@@ -4,13 +4,16 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network webkitwidgets xml
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Clipper
+
 TEMPLATE = app
 
+target.path = /usr/local/bin/
+INSTALLS += target
 
 SOURCES += main.cpp\
            clipper.cpp \
