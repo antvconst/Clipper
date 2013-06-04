@@ -29,7 +29,6 @@ public slots:
     void tnyczPublish(QString text, QString title, QString password, bool is_code, bool is_private, bool is_protected);
     void imageshackUpload(QByteArray &picture);
     void onImageshackUploaded(QNetworkReply* response);
-    
 };
 
 #endif // CLIPPERAPIS_H

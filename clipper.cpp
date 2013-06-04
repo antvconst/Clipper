@@ -29,10 +29,6 @@ Clipper::Clipper(QWidget *parent) :
     shortcutButtons.addButton(ui->publishPasteButton, 2);
     shortcutButtons.addButton(ui->makeScreenshotButton, 3);
 
-    shortcuts["ShortenLink"] = settings->value("Hotkeys/ShortenLink", "F6").toString();
-    shortcuts["PastePublish"] = settings->value("Hotkeys/PastePublish", "F7").toString();
-    shortcuts["Screenshot"] = settings->value("Hotkeys/Screenshot", "F8").toString();
-
     initHotkeys();
 
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveSettings()));
@@ -40,15 +36,16 @@ Clipper::Clipper(QWidget *parent) :
     connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this,
             SLOT(onTrayIconClicked(QSystemTrayIcon::ActivationReason)));
     connect(clipboard, SIGNAL(dataChanged()), this, SLOT(updateHistory()));
-    connect(linkShortenShortcut, SIGNAL(activated()), this, SLOT(onLinkShortenShortcutActivated()));
-    connect(tnyczPublishShortcut, SIGNAL(activated()), this, SLOT(onTnyczPublishShortcutActivated()));
     connect(api, SIGNAL(linkReady(QString)), this, SLOT(linkToClipboard(QString)));
     connect(&shortcutButtons, SIGNAL(buttonClicked(int)), this, SLOT(onChangeHotkeyButtonClicked(int)));
-    connect(screenshotShortcut, SIGNAL(activated()), this, SLOT(makeScreenshot()));
 }
 
 Clipper::~Clipper()
 {
+    disconnect(this);
+    linkShortenShortcut->setEnabled(false);
+    tnyczPublishShortcut->setEnabled(false);
+    screenshotShortcut->setEnabled(false);
 }
 
 void Clipper::onLinkShortenShortcutActivated()
@@ -56,7 +53,7 @@ void Clipper::onLinkShortenShortcutActivated()
     if (!clipboard->text().isEmpty())
         api->googleLinkShorten(clipboard->text(QClipboard::Selection));
     else
-        tray->showMessage("", "Selection is empty");
+        tray->showMessage("", "Selection is empty", QSystemTrayIcon::Information, 3000);
 }
 
 void Clipper::onTnyczPublishShortcutActivated()
@@ -70,13 +67,13 @@ void Clipper::onTnyczPublishShortcutActivated()
                 SLOT(tnyczPublish(QString,QString,QString,bool,bool,bool)));
     }
     else
-        tray->showMessage("", "Selection is empty");
+        tray->showMessage("", "Selection is empty", QSystemTrayIcon::Information, 3000);
 }
 
 void Clipper::linkToClipboard(QString link)
 {
     clipboard->setText(link);
-    tray->showMessage("", "Link is copied to your clipboard.");
+    tray->showMessage("", "Link is copied to your clipboard.", QSystemTrayIcon::Information, 3000);
 }
 
 void Clipper::updateHistory()
@@ -111,7 +108,7 @@ void Clipper::saveSettings()
     settings->setValue("PastePublish", ui->publishPasteButton->text());
     settings->setValue("Screenshot", ui->makeScreenshotButton->text());
     settings->endGroup();
-
+    initHotkeys();
 }
 
 void Clipper::onTrayIconClicked(QSystemTrayIcon::ActivationReason reason)
@@ -127,12 +124,25 @@ void Clipper::makeScreenshot()
     QBuffer buffer(&screenshotData);
     buffer.open(QIODevice::WriteOnly);
     screenshot.save(&buffer, "PNG");
-    tray->showMessage("", "Uploading screenshot, please wait..");
+    tray->showMessage("", "Uploading screenshot, please wait..", QSystemTrayIcon::Information, 1000);
     api->imageshackUpload(screenshotData);
 }
 
 void Clipper::initHotkeys()
 {
+    if (!hotkeysInit)
+    {
+        linkShortenShortcut->disconnect(this);
+        tnyczPublishShortcut->disconnect(this);
+        screenshotShortcut->disconnect(this);
+        tray->showMessage("", "Hotkeys updated", QSystemTrayIcon::Information, 2000);
+    }
+    else
+        hotkeysInit = false;
+    shortcuts["ShortenLink"] = settings->value("Hotkeys/ShortenLink", "F6").toString();
+    shortcuts["PastePublish"] = settings->value("Hotkeys/PastePublish", "F7").toString();
+    shortcuts["Screenshot"] = settings->value("Hotkeys/Screenshot", "F8").toString();
+
     linkShortenShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["ShortenLink"]));
     tnyczPublishShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["PastePublish"]));
     screenshotShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["Screenshot"]));
@@ -140,4 +150,8 @@ void Clipper::initHotkeys()
     ui->shortenLinkButton->setText(shortcuts["ShortenLink"]);
     ui->publishPasteButton->setText(shortcuts["PastePublish"]);
     ui->makeScreenshotButton->setText(shortcuts["Screenshot"]);
+
+    connect(linkShortenShortcut, SIGNAL(activated()), this, SLOT(onLinkShortenShortcutActivated()));
+    connect(tnyczPublishShortcut, SIGNAL(activated()), this, SLOT(onTnyczPublishShortcutActivated()));
+    connect(screenshotShortcut, SIGNAL(activated()), this, SLOT(makeScreenshot()));
 }

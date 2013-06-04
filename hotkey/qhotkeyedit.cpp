@@ -22,7 +22,8 @@ bool QHotkeyEdit::eventFilter(QObject *obj, QEvent *event)
         if (key == Qt::Key_Escape) this->close();
         else
         if (key != Qt::Key_Control && key != Qt::Key_Shift && key!= Qt::Key_Backspace &&
-                key != Qt::Key_Alt && key != Qt::Key_Meta && key != Qt::Key_unknown)
+            key != Qt::Key_Alt && key != Qt::Key_Meta && key != Qt::Key_unknown&&
+            key != Qt::Key_Return)
         {
             Qt::KeyboardModifiers modifiers = keyEvent->modifiers();
 
@@ -42,6 +43,11 @@ bool QHotkeyEdit::eventFilter(QObject *obj, QEvent *event)
 }
 void QHotkeyEdit::on_pushButton_clicked()
 {
-    emit hotkeyReady(textHotkey);
-    this->close();
+    if (!ui->lineEdit->text().isEmpty())
+    {
+        emit hotkeyReady(textHotkey);
+        this->close();
+    }
+    else
+        this->close();
 }

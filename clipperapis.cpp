@@ -85,6 +85,7 @@ void ClipperAPIs::imageshackUpload(QByteArray &picture)
     requestData.append("json\r\n");
     requestData.append("--AyV04a--");
 
+
     manager->post(request, requestData);
     connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onImageshackUploaded(QNetworkReply*)));
 }

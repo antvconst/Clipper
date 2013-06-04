@@ -60,7 +60,7 @@ private:
     QxtGlobalShortcut *linkShortenShortcut;
     QxtGlobalShortcut *tnyczPublishShortcut;
     QxtGlobalShortcut *screenshotShortcut;
-
+    bool hotkeysInit = true;
 };
 
 #endif // CLIPPER_H
