@@ -46,6 +46,7 @@ private slots:
     void onTrayIconClicked(QSystemTrayIcon::ActivationReason reason);
     void makeScreenshot();
     void initHotkeys();
+    void historyItemToClipboard(QListWidgetItem* item);
 
 private:
     Ui::Clipper *ui;

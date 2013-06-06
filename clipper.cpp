@@ -38,6 +38,7 @@ Clipper::Clipper(QWidget *parent) :
     connect(clipboard, SIGNAL(dataChanged()), this, SLOT(updateHistory()));
     connect(api, SIGNAL(linkReady(QString)), this, SLOT(linkToClipboard(QString)));
     connect(&shortcutButtons, SIGNAL(buttonClicked(int)), this, SLOT(onChangeHotkeyButtonClicked(int)));
+    connect(ui->listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(historyItemToClipboard(QListWidgetItem*)));
 }
 
 Clipper::~Clipper()
@@ -78,7 +79,12 @@ void Clipper::linkToClipboard(QString link)
 
 void Clipper::updateHistory()
 {
-    ui->listWidget->addItem(QTime::currentTime().toString()+". "+clipboard->text());
+    QString newText = clipboard->text();
+    if (ui->listWidget->findItems(newText, Qt::MatchExactly).isEmpty())
+    {
+        ui->listWidget->addItem(newText);
+        ui->listWidget->itemAt(ui->listWidget->count(), 0)->setToolTip(QTime::currentTime().toString());
+    }
 }
 
 void Clipper::onChangeHotkeyButtonClicked(int id)
@@ -154,4 +160,10 @@ void Clipper::initHotkeys()
     connect(linkShortenShortcut, SIGNAL(activated()), this, SLOT(onLinkShortenShortcutActivated()));
     connect(tnyczPublishShortcut, SIGNAL(activated()), this, SLOT(onTnyczPublishShortcutActivated()));
     connect(screenshotShortcut, SIGNAL(activated()), this, SLOT(makeScreenshot()));
+}
+
+void Clipper::historyItemToClipboard(QListWidgetItem *item)
+{
+    clipboard->setText(item->text());
+    tray->showMessage("", "History item is copied into clipboard.", QSystemTrayIcon::Information, 3000);
 }
