@@ -12,7 +12,7 @@ TARGET = Clipper
 
 TEMPLATE = app
 
-target.path = /usr/local/bin/
+target.path = /usr/bin/
 INSTALLS += target
 
 SOURCES += main.cpp\
@@ -29,12 +29,12 @@ HEADERS  += clipper.h \
     hotkey/qhotkeyedit.h
 
 # Qxt
-!macx:SOURCES += qxt/qxtglobalshortcut.cpp
-!macx:HEADERS += qxt/qxtglobalshortcut_p.h \
-    qxt/qxtglobalshortcut.h \
-    qxt/qxtglobal.h
-win32:SOURCES += qxt/qxtglobalshortcut_win.cpp
-unix:!macx:SOURCES += qxt/qxtglobalshortcut_x11.cpp
+!macx:SOURCES += hotkey/qxtglobalshortcut.cpp
+!macx:HEADERS += hotkey/qxtglobalshortcut_p.h \
+    hotkey/qxtglobalshortcut.h \
+    hotkey/qxtglobal.h
+win32:SOURCES += hotkey/qxtglobalshortcut_win.cpp
+unix:!macx:SOURCES += hotkey/qxtglobalshortcut_x11.cpp
 
 RESOURCES += \
     Clipper.qrc

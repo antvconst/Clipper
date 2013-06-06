@@ -18,10 +18,10 @@
 #include <QAction>
 #include "ui_clipper.h"
 
+#include "hotkey/qxtglobalshortcut.h"
 #include "hotkey/qhotkeyedit.h"
 #include "clipperapis.h"
 #include "tnyczoptions.h"
-#include "qxt/qxtglobalshortcut.h"
 
 namespace Ui {
 class Clipper;
