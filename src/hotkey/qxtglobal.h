@@ -53,9 +53,9 @@
 
 #if !defined(QXT_STATIC) && !defined(QXT_DOXYGEN_RUN)
 #    if defined(BUILD_QXT_CORE)
-#        define QXT_CORE_EXPORT Q_DECL_EXPORT
+#        define QXT_CORE_EXPORT
 #    else
-#        define QXT_CORE_EXPORT Q_DECL_IMPORT
+#        define QXT_CORE_EXPORT
 #    endif
 #else
 #    define QXT_CORE_EXPORT
@@ -63,9 +63,9 @@
  
 #if !defined(QXT_STATIC) && !defined(QXT_DOXYGEN_RUN)
 #    if defined(BUILD_QXT_GUI)
-#        define QXT_GUI_EXPORT Q_DECL_EXPORT
+#        define QXT_GUI_EXPORT
 #    else
-#        define QXT_GUI_EXPORT Q_DECL_IMPORT
+#        define QXT_GUI_EXPORT
 #    endif
 #else
 #    define QXT_GUI_EXPORT
@@ -73,9 +73,9 @@
  
 #if !defined(QXT_STATIC) && !defined(QXT_DOXYGEN_RUN)
 #    if defined(BUILD_QXT_NETWORK)
-#        define QXT_NETWORK_EXPORT Q_DECL_EXPORT
+#        define QXT_NETWORK_EXPORT
 #    else
-#        define QXT_NETWORK_EXPORT Q_DECL_IMPORT
+#        define QXT_NETWORK_EXPORT
 #    endif
 #else
 #    define QXT_NETWORK_EXPORT
@@ -83,9 +83,9 @@
  
 #if !defined(QXT_STATIC) && !defined(QXT_DOXYGEN_RUN)
 #    if defined(BUILD_QXT_SQL)
-#        define QXT_SQL_EXPORT Q_DECL_EXPORT
+#        define QXT_SQL_EXPORT
 #    else
-#        define QXT_SQL_EXPORT Q_DECL_IMPORT
+#        define QXT_SQL_EXPORT
 #    endif
 #else
 #    define QXT_SQL_EXPORT
@@ -93,9 +93,9 @@
  
 #if !defined(QXT_STATIC) && !defined(QXT_DOXYGEN_RUN)
 #    if defined(BUILD_QXT_WEB)
-#        define QXT_WEB_EXPORT Q_DECL_EXPORT
+#        define QXT_WEB_EXPORT
 #    else
-#        define QXT_WEB_EXPORT Q_DECL_IMPORT
+#        define QXT_WEB_EXPORT
 #    endif
 #else
 #    define QXT_WEB_EXPORT
@@ -103,9 +103,9 @@
  
 #if !defined(QXT_STATIC) && !defined(QXT_DOXYGEN_RUN)
 #    if defined(BUILD_QXT_BERKELEY)
-#        define QXT_BERKELEY_EXPORT Q_DECL_EXPORT
+#        define QXT_BERKELEY_EXPORT
 #    else
-#        define QXT_BERKELEY_EXPORT Q_DECL_IMPORT
+#        define QXT_BERKELEY_EXPORT
 #    endif
 #else
 #    define QXT_BERKELEY_EXPORT
@@ -113,9 +113,9 @@
 
 #if !defined(QXT_STATIC) && !defined(QXT_DOXYGEN_RUN)
 #    if defined(BUILD_QXT_ZEROCONF)
-#        define QXT_ZEROCONF_EXPORT Q_DECL_EXPORT
+#        define QXT_ZEROCONF_EXPORT
 #    else
-#        define QXT_ZEROCONF_EXPORT Q_DECL_IMPORT
+#        define QXT_ZEROCONF_EXPORT
 #    endif
 #else
 #    define QXT_ZEROCONF_EXPORT

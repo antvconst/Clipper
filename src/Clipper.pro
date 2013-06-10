@@ -10,8 +10,13 @@ TARGET = Clipper
 
 TEMPLATE = app
 
+unix {
 target.path = /usr/bin/
 INSTALLS += target
+}
+win32{
+RC_FILE = icon.rc
+}
 
 SOURCES += main.cpp\
            clipper.cpp \
@@ -24,7 +29,7 @@ HEADERS  += clipper.h \
     json/json.h \
     clipperapis.h \
     tnyczoptions.h \
-    hotkey/qhotkeyedit.h \
+    hotkey/qhotkeyedit.h
 
 RESOURCES += \
     Clipper.qrc
@@ -38,7 +43,7 @@ QMAKE_CXXFLAGS += -std=c++11
 
 # Qxt
 !macx:SOURCES += hotkey/qxtglobalshortcut.cpp
-!macx:HEADERS += hotkey/qxtglobalshortcut_p.h \
+!macx:HEADERS += \
     hotkey/qxtglobalshortcut.h \
     hotkey/qxtglobal.h
 win32:SOURCES += hotkey/qxtglobalshortcut_win.cpp

@@ -12,7 +12,7 @@ TnyczOptions::TnyczOptions(QWidget *parent) :
     int y = (screenGeometry.height()-this->height()) / 2;
     this->move(x, y);
 
-    setWindowIcon(QIcon(":/clipper.ico"));
+    setWindowIcon(QIcon(":/icon.ico"));
     connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
     connect(ui->publishButton, SIGNAL(clicked()), this, SLOT(returnPublishOptions()));
 

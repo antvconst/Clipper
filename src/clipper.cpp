@@ -4,7 +4,7 @@ Clipper::Clipper(QWidget *parent) :
     QWidget(parent), ui(new Ui::Clipper)
 {
     ui->setupUi(this);
-    appIcon.addFile(":/clipper.ico");
+    appIcon.addFile(":/icon.ico");
 
     QRect screenGeometry = QApplication::desktop()->screenGeometry();
     int x = (screenGeometry.width()-this->width()) / 2;
@@ -60,7 +60,8 @@ void Clipper::linkShorten()
 #ifdef Q_OS_LINUX
     if (!clipboard->text(QClipboard::Selection).isEmpty())
         api->googleLinkShorten(clipboard->text(QClipboard::Selection));
-#elif Q_OS_WIN
+#endif
+#ifdef Q_OS_WIN
     if (!clipboard->text().isEmpty())
         api->googleLinkShorten(clipboard->text());
 #endif
@@ -75,7 +76,8 @@ void Clipper::tnyczPublish()
 
 #ifdef Q_OS_LINUX
     if (!clipboard->text(QClipboard::Selection).isEmpty())
-#elif Q_OS_WIN
+#endif
+#ifdef Q_OS_WIN
     if (!clipboard->text().isEmpty())
 #endif
     {
@@ -83,8 +85,9 @@ void Clipper::tnyczPublish()
         tnyczOptionsWindow->show();
 #ifdef Q_OS_LINUX
         tnyczOptionsWindow->setPasteText(clipboard->text(QClipboard::Selection));
-#elif Q_OS_WIN
-        tnycz->setPasteText(clipboard->text());
+#endif
+#ifdef Q_OS_WIN
+        tnyczOptionsWindow->setPasteText(clipboard->text());
 #endif
         connect(tnyczOptionsWindow, SIGNAL(optionsReady(QString,QString,QString,bool,bool,bool)), api,
                 SLOT(tnyczPublish(QString,QString,QString,bool,bool,bool)));

@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="Clipper.qrc">
-    <normaloff>:/clipper.ico</normaloff>:/clipper.ico</iconset>
+    <normaloff>:/icon.ico</normaloff>:/icon.ico</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
