@@ -10,6 +10,7 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QMenu>
+#include <QLabel>
 #include <QMap>
 #include <QPixmap>
 #include <QScreen>
@@ -37,7 +38,7 @@ public:
     explicit Clipper(QWidget *parent = 0);
     ~Clipper();
 
-private slots:
+public slots:
     void linkShorten();
     void linkToClipboard(QString link);
     void tnyczPublish();
@@ -49,6 +50,8 @@ private slots:
     void makeScreenshot();
     void initHotkeys();
     void historyItemToClipboard(QListWidgetItem* item);
+    void makeQRCode();
+    void QRCodeReady(QPixmap *qrCode);
 
 private:
     Ui::Clipper *ui;
@@ -66,6 +69,7 @@ private:
     QxtGlobalShortcut *linkShortenShortcut;
     QxtGlobalShortcut *tnyczPublishShortcut;
     QxtGlobalShortcut *screenshotShortcut;
+    QxtGlobalShortcut *makeQRCodeShortcut;
     bool hotkeysInit = true;
 
 protected:

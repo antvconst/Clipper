@@ -94,3 +94,24 @@ void ClipperAPIs::onImageshackUploaded(QNetworkReply *response)
     QVariantMap linkMap = responseMap["links"].toMap();
     emit linkReady(linkMap["image_link"].toString());
 }
+
+void ClipperAPIs::textToQRCode(QString text)
+{
+    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    QUrl requestUrl("http://qrickit.com/api/qr");
+    QUrlQuery requestQuery;
+    requestQuery.addQueryItem("d", QUrl::toPercentEncoding(text));
+    requestUrl.setQuery(requestQuery);
+
+    manager->get(QNetworkRequest(requestUrl));
+    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onQRCodeReplyReady(QNetworkReply*)));
+}
+
+void ClipperAPIs::onQRCodeReplyReady(QNetworkReply *reply)
+{
+    QPixmap *qrCode = new QPixmap();
+    qrCode->loadFromData(reply->readAll());
+    qDebug() << "emited";
+    emit qrCodeReady(qrCode);
+}
+

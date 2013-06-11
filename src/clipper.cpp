@@ -15,7 +15,12 @@ Clipper::Clipper(QWidget *parent) :
     this->hide();
 
     QString settingsFilePath = QDir::homePath()+"/.clipper";
+#ifdef Q_OS_LINUX
     settings = new QSettings(settingsFilePath, QSettings::NativeFormat);
+#endif
+#ifdef Q_OS_WIN
+    settings = new QSettings(settingsFilePath, QSettings::IniFormat);
+#endif
 
     clipboard = QApplication::clipboard();
     api = new ClipperAPIs();
@@ -34,6 +39,7 @@ Clipper::Clipper(QWidget *parent) :
     shortcutButtons.addButton(ui->shortenLinkButton, 1);
     shortcutButtons.addButton(ui->publishPasteButton, 2);
     shortcutButtons.addButton(ui->makeScreenshotButton, 3);
+    shortcutButtons.addButton(ui->makeQRCodeButton, 4);
 
     initHotkeys();
 
@@ -125,7 +131,7 @@ void Clipper::onChangeHotkeyButtonClicked(int id)
 
 void Clipper::changeHotkey(QString hotkey)
 {
-    if (!shortcuts.values().contains(hotkey))
+    if (!shortcuts.values().contains(hotkey) || hotkey == shortcutButtons.button(button_id)->text())
     {
         shortcutButtons.button(button_id)->setText(hotkey);
         button_id = 0;
@@ -141,6 +147,7 @@ void Clipper::saveSettings()
     settings->setValue("ShortenLink", ui->shortenLinkButton->text());
     settings->setValue("PastePublish", ui->publishPasteButton->text());
     settings->setValue("Screenshot", ui->makeScreenshotButton->text());
+    settings->setValue("QRCode", ui->makeQRCodeButton->text());
     settings->endGroup();
     initHotkeys();
 }
@@ -153,6 +160,7 @@ void Clipper::onTrayIconClicked(QSystemTrayIcon::ActivationReason reason)
         ui->shortenLinkButton->setText(settings->value("Hotkeys/ShortenLink", "F6").toString());
         ui->publishPasteButton->setText(settings->value("Hotkeys/PastePublish", "F7").toString());
         ui->makeScreenshotButton->setText(settings->value("Hotkeys/Screenshot", "F8").toString());
+        ui->makeQRCodeButton->setText(settings->value("Hotkeys/QRCode", "F9").toString());
     }
 }
 
@@ -168,6 +176,38 @@ void Clipper::makeScreenshot()
     api->imageshackUpload(screenshotData);
 }
 
+void Clipper::makeQRCode()
+{
+#ifdef Q_OS_LINUX
+    if (!clipboard->text(QClipboard::Selection).isEmpty())
+#endif
+#ifdef Q_OS_WIN
+    if (!clipboard->text().isEmpty())
+#endif
+    {
+#ifdef Q_OS_LINUX
+        api->textToQRCode(clipboard->text(QClipboard::Selection));
+#endif
+#ifdef Q_OS_WIN
+        api->textToQRCode(clipboard->text());
+#endif
+        connect(api, SIGNAL(qrCodeReady(QPixmap*)), this, SLOT(QRCodeReady(QPixmap*)), Qt::UniqueConnection);
+    }
+    else
+        tray->showMessage("", "Selection is empty", QSystemTrayIcon::Information, 3000);
+}
+
+void Clipper::QRCodeReady(QPixmap *qrCode)
+{
+    QLabel *qrCodeWindow = new QLabel();
+    qrCodeWindow->setPixmap(*qrCode);
+    qrCodeWindow->setAlignment(Qt::AlignCenter);
+    qrCodeWindow->setWindowIcon(appIcon);
+    qrCodeWindow->setWindowFlags(Qt::WindowCloseButtonHint);
+    qrCodeWindow->setAttribute(Qt::WA_DeleteOnClose);
+    qrCodeWindow->show();
+}
+
 void Clipper::initHotkeys()
 {
     if (!hotkeysInit)
@@ -175,10 +215,12 @@ void Clipper::initHotkeys()
         linkShortenShortcut->disconnect(this);
         tnyczPublishShortcut->disconnect(this);
         screenshotShortcut->disconnect(this);
+        makeQRCodeShortcut->disconnect(this);
 
         delete linkShortenShortcut;
         delete tnyczPublishShortcut;
         delete screenshotShortcut;
+        delete makeQRCodeShortcut;
         tray->showMessage("", "Hotkeys updated", QSystemTrayIcon::Information, 2000);
     }
     else
@@ -187,18 +229,22 @@ void Clipper::initHotkeys()
     shortcuts["ShortenLink"] = settings->value("Hotkeys/ShortenLink", "F6").toString();
     shortcuts["PastePublish"] = settings->value("Hotkeys/PastePublish", "F7").toString();
     shortcuts["Screenshot"] = settings->value("Hotkeys/Screenshot", "F8").toString();
+    shortcuts["QRCode"] = settings->value("Hotkeys/QRCode", "F9").toString();
 
     linkShortenShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["ShortenLink"]));
     tnyczPublishShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["PastePublish"]));
     screenshotShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["Screenshot"]));
+    makeQRCodeShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["QRCode"]));
 
     ui->shortenLinkButton->setText(shortcuts["ShortenLink"]);
     ui->publishPasteButton->setText(shortcuts["PastePublish"]);
     ui->makeScreenshotButton->setText(shortcuts["Screenshot"]);
+    ui->makeQRCodeButton->setText(shortcuts["QRCode"]);
 
     connect(linkShortenShortcut, SIGNAL(activated()), this, SLOT(linkShorten()));
     connect(tnyczPublishShortcut, SIGNAL(activated()), this, SLOT(tnyczPublish()));
     connect(screenshotShortcut, SIGNAL(activated()), this, SLOT(makeScreenshot()));
+    connect(makeQRCodeShortcut, SIGNAL(activated()), this, SLOT(makeQRCode()));
 }
 
 void Clipper::historyItemToClipboard(QListWidgetItem *item)

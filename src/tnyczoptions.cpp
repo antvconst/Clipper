@@ -7,6 +7,9 @@ TnyczOptions::TnyczOptions(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    is_code = true;
+    is_private = true;
+
     QRect screenGeometry = QApplication::desktop()->screenGeometry();
     int x = (screenGeometry.width()-this->width()) / 2;
     int y = (screenGeometry.height()-this->height()) / 2;

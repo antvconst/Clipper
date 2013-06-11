@@ -5,6 +5,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QUrlQuery>
 #include <QPixmap>
 #include <QFile>
 #include <QUrl>
@@ -21,6 +22,7 @@ public:
     
 signals:
     void linkReady(QString link);
+    void qrCodeReady(QPixmap*);
     
 public slots:
     void onLinkShortened(QNetworkReply* reply);
@@ -29,6 +31,8 @@ public slots:
     void tnyczPublish(QString text, QString title, QString password, bool is_code, bool is_private, bool is_protected);
     void imageshackUpload(QByteArray &picture);
     void onImageshackUploaded(QNetworkReply* response);
+    void textToQRCode(QString text);
+    void onQRCodeReplyReady(QNetworkReply* reply);
 };
 
 #endif // CLIPPERAPIS_H
