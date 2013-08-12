@@ -21,7 +21,7 @@ Clipper::Clipper(QWidget *parent) :
 #ifdef Q_OS_WIN
     settings = new QSettings(settingsFilePath, QSettings::IniFormat);
 #endif
-
+    multicopyEnabled = false;
     clipboard = QApplication::clipboard();
     api = new ClipperAPIs();
     tnyczOptionsWindow = new TnyczOptions;
@@ -40,25 +40,31 @@ Clipper::Clipper(QWidget *parent) :
     shortcutButtons.addButton(ui->publishPasteButton, 2);
     shortcutButtons.addButton(ui->makeScreenshotButton, 3);
     shortcutButtons.addButton(ui->makeQRCodeButton, 4);
+    shortcutButtons.addButton(ui->toggleMulticopyButton, 5);
 
-    initHotkeys();
+    reloadSettings();
 
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveSettings()));
     connect(ui->clearButton, &QPushButton::clicked, [=]() { ui->listWidget->clear(); });
     connect(ui->listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(historyItemToClipboard(QListWidgetItem*)));
     connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this,
             SLOT(onTrayIconClicked(QSystemTrayIcon::ActivationReason)));
-    connect(clipboard, SIGNAL(dataChanged()), this, SLOT(updateHistory()));
     connect(api, SIGNAL(linkReady(QString)), this, SLOT(linkToClipboard(QString)));
     connect(&shortcutButtons, SIGNAL(buttonClicked(int)), this, SLOT(onChangeHotkeyButtonClicked(int)));
+    connect(ui->clearButton_2, &QPushButton::clicked, [=]() { ui->textEdit->clear(); });
+    connect(ui->copyAllButton, &QPushButton::clicked, [=]()
+    {
+        if (!ui->textEdit->document()->isEmpty())
+        {
+            clipboard->setText(ui->textEdit->toPlainText());
+            tray->showMessage("", "Data is copied into clipboard", QSystemTrayIcon::Information, 2000);
+        }
+    });
 }
 
 Clipper::~Clipper()
 {
     disconnect(this);
-    linkShortenShortcut->disconnect(this);
-    tnyczPublishShortcut->disconnect(this);
-    screenshotShortcut->disconnect(this);
 }
 
 void Clipper::linkShorten()
@@ -148,8 +154,19 @@ void Clipper::saveSettings()
     settings->setValue("PastePublish", ui->publishPasteButton->text());
     settings->setValue("Screenshot", ui->makeScreenshotButton->text());
     settings->setValue("QRCode", ui->makeQRCodeButton->text());
+    settings->setValue("Multicopy", ui->toggleMulticopyButton->text());
     settings->endGroup();
-    initHotkeys();
+
+    settings->beginGroup("General");
+    settings->setValue("LinkShortening", ui->linkShortening->isChecked());
+    settings->setValue("PastePublishing", ui->pastePublishing->isChecked());
+    settings->setValue("ScreenshotMaking", ui->screenshotMaking->isChecked());
+    settings->setValue("QRCodeMaking", ui->QRCode->isChecked());
+    settings->setValue("Multicopy", ui->Multicopy->isChecked());
+    settings->setValue("SplitIntoLines", ui->splitMulticopy->isChecked());
+    settings->setValue("KeepHistory", ui->keepHistory->isChecked());
+    settings->endGroup();
+    reloadSettings();
 }
 
 void Clipper::onTrayIconClicked(QSystemTrayIcon::ActivationReason reason)
@@ -157,10 +174,7 @@ void Clipper::onTrayIconClicked(QSystemTrayIcon::ActivationReason reason)
     if (reason == QSystemTrayIcon::DoubleClick)
     {
         show();
-        ui->shortenLinkButton->setText(settings->value("Hotkeys/ShortenLink", "F6").toString());
-        ui->publishPasteButton->setText(settings->value("Hotkeys/PastePublish", "F7").toString());
-        ui->makeScreenshotButton->setText(settings->value("Hotkeys/Screenshot", "F8").toString());
-        ui->makeQRCodeButton->setText(settings->value("Hotkeys/QRCode", "F9").toString());
+        updateSettingsGUI();
     }
 }
 
@@ -208,20 +222,38 @@ void Clipper::QRCodeReady(QPixmap *qrCode)
     qrCodeWindow->show();
 }
 
-void Clipper::initHotkeys()
+void Clipper::reloadSettings()
 {
     if (!hotkeysInit)
     {
-        linkShortenShortcut->disconnect(this);
-        tnyczPublishShortcut->disconnect(this);
-        screenshotShortcut->disconnect(this);
-        makeQRCodeShortcut->disconnect(this);
 
-        delete linkShortenShortcut;
-        delete tnyczPublishShortcut;
-        delete screenshotShortcut;
-        delete makeQRCodeShortcut;
-        tray->showMessage("", "Hotkeys updated", QSystemTrayIcon::Information, 2000);
+        clipboard->disconnect(this);
+
+        if (general["LinkShortening"])
+        {
+            linkShortenShortcut->disconnect(this);
+            delete linkShortenShortcut;
+        }
+        if (general["PastePublishing"])
+        {
+            tnyczPublishShortcut->disconnect(this);
+            delete tnyczPublishShortcut;
+        }
+        if (general["ScreenshotMaking"])
+        {
+            screenshotShortcut->disconnect(this);
+            delete screenshotShortcut;
+        }
+        if (general["QRCodeMaking"])
+        {
+            toggleMulticopyShortcut->disconnect(this);
+            delete makeQRCodeShortcut;
+        }
+        if (general["Multicopy"])
+        {
+            toggleMulticopyShortcut->disconnect(this);
+            delete toggleMulticopyShortcut;
+        }
     }
     else
         hotkeysInit = false;
@@ -230,21 +262,91 @@ void Clipper::initHotkeys()
     shortcuts["PastePublish"] = settings->value("Hotkeys/PastePublish", "F7").toString();
     shortcuts["Screenshot"] = settings->value("Hotkeys/Screenshot", "F8").toString();
     shortcuts["QRCode"] = settings->value("Hotkeys/QRCode", "F9").toString();
+    shortcuts["Multicopy"] = settings->value("Hotkeys/Multicopy", "Ctrl+Shift+C").toString();
 
-    linkShortenShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["ShortenLink"]));
-    tnyczPublishShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["PastePublish"]));
-    screenshotShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["Screenshot"]));
-    makeQRCodeShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["QRCode"]));
+    general["LinkShortening"] = settings->value("General/LinkShortening", "1").toBool();
+    general["PastePublishing"] = settings->value("General/PastePublishing", "1").toBool();
+    general["ScreenshotMaking"] = settings->value("General/ScreenshotMaking", "1").toBool();
+    general["QRCodeMaking"] = settings->value("General/QRCodeMaking", "1").toBool();
+    general["Multicopy"] = settings->value("General/Multicopy", "1").toBool();
+    general["SplitIntoLines"] = settings->value("General/SplitIntoLines", "1").toBool();
+    general["KeepHistory"] = settings->value("General/KeepHistory", "1").toBool();
 
+    if (general["LinkShortening"])
+    {
+        linkShortenShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["ShortenLink"]));
+        connect(linkShortenShortcut, SIGNAL(activated()), this, SLOT(linkShorten()));
+    }
+    if (general["PastePublishing"])
+    {
+        tnyczPublishShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["PastePublish"]));
+        connect(tnyczPublishShortcut, SIGNAL(activated()), this, SLOT(tnyczPublish()));
+    }
+    if (general["ScreenshotMaking"])
+    {
+        screenshotShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["Screenshot"]));
+        connect(screenshotShortcut, SIGNAL(activated()), this, SLOT(makeScreenshot()));
+    }
+    if (general["QRCodeMaking"])
+    {
+        makeQRCodeShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["QRCode"]));
+        connect(makeQRCodeShortcut, SIGNAL(activated()), this, SLOT(makeQRCode()));
+    }
+    if (general["Multicopy"])
+    {
+        toggleMulticopyShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["Multicopy"]));
+        connect(toggleMulticopyShortcut, SIGNAL(activated()), this, SLOT(toggleMulticopy()));
+    }
+    if (general["KeepHistory"])
+    {
+        connect(clipboard, SIGNAL(dataChanged()), this, SLOT(updateHistory()));
+    }
+
+    updateSettingsGUI();
+}
+
+void Clipper::toggleMulticopy()
+{
+    if (!multicopyEnabled)
+    {
+        multicopyEnabled = true;
+        connect(clipboard, SIGNAL(dataChanged()), this, SLOT(updateMulticopyStore()));
+        tray->showMessage("Multicopy mode: ON", "Copy/Cut to append", QSystemTrayIcon::Information, 2000);
+    }
+    else
+    {
+        multicopyEnabled = false;
+        disconnect(clipboard, SIGNAL(dataChanged()), this, SLOT(updateMulticopyStore()));
+        clipboard->setText(ui->textEdit->toPlainText());
+        tray->showMessage("Multicopy mode: OFF", "Data is copied into clipboard and available in Main Window", QSystemTrayIcon::Information, 3000);
+    }
+}
+
+void Clipper::updateMulticopyStore()
+{
+    QTextDocument *doc = ui->textEdit->document();
+    if (general["SplitIntoLines"])
+        doc->setPlainText(doc->toPlainText() + "\n" + clipboard->text());
+    else
+        doc->setPlainText(doc->toPlainText() + " " + clipboard->text());
+    tray->showMessage("", "Data appended", QSystemTrayIcon::Information, 3000);
+}
+
+void Clipper::updateSettingsGUI()
+{
     ui->shortenLinkButton->setText(shortcuts["ShortenLink"]);
     ui->publishPasteButton->setText(shortcuts["PastePublish"]);
     ui->makeScreenshotButton->setText(shortcuts["Screenshot"]);
     ui->makeQRCodeButton->setText(shortcuts["QRCode"]);
+    ui->toggleMulticopyButton->setText(shortcuts["Multicopy"]);
 
-    connect(linkShortenShortcut, SIGNAL(activated()), this, SLOT(linkShorten()));
-    connect(tnyczPublishShortcut, SIGNAL(activated()), this, SLOT(tnyczPublish()));
-    connect(screenshotShortcut, SIGNAL(activated()), this, SLOT(makeScreenshot()));
-    connect(makeQRCodeShortcut, SIGNAL(activated()), this, SLOT(makeQRCode()));
+    ui->linkShortening->setChecked(general["LinkShortening"]);
+    ui->pastePublishing->setChecked(general["PastePublishing"]);
+    ui->screenshotMaking->setChecked(general["ScreenshotMaking"]);
+    ui->QRCode->setChecked(general["QRCodeMaking"]);
+    ui->Multicopy->setChecked(general["Multicopy"]);
+    ui->splitMulticopy->setChecked(general["SplitIntoLines"]);
+    ui->keepHistory->setChecked(general["KeepHistory"]);
 }
 
 void Clipper::historyItemToClipboard(QListWidgetItem *item)

@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <QLabel>
+#include <QTextDocument>
 #include <QMap>
 #include <QPixmap>
 #include <QScreen>
@@ -48,10 +49,13 @@ public slots:
     void saveSettings();
     void onTrayIconClicked(QSystemTrayIcon::ActivationReason reason);
     void makeScreenshot();
-    void initHotkeys();
+    void reloadSettings();
     void historyItemToClipboard(QListWidgetItem* item);
     void makeQRCode();
     void QRCodeReady(QPixmap *qrCode);
+    void updateSettingsGUI();
+    void toggleMulticopy();
+    void updateMulticopyStore();
 
 private:
     Ui::Clipper *ui;
@@ -64,12 +68,15 @@ private:
     QIcon appIcon;
     QHotkeyEdit *hotkeyEditWindow;
     TnyczOptions *tnyczOptionsWindow;
+    bool multicopyEnabled;
 
     QMap<QString, QString> shortcuts;
+    QMap<QString, bool> general;
     QxtGlobalShortcut *linkShortenShortcut;
     QxtGlobalShortcut *tnyczPublishShortcut;
     QxtGlobalShortcut *screenshotShortcut;
     QxtGlobalShortcut *makeQRCodeShortcut;
+    QxtGlobalShortcut *toggleMulticopyShortcut;
     bool hotkeysInit = true;
 
 protected:
