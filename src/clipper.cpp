@@ -310,6 +310,7 @@ void Clipper::toggleMulticopy()
     if (!multicopyEnabled)
     {
         multicopyEnabled = true;
+        ui->textEdit->document()->clear();
         connect(clipboard, SIGNAL(dataChanged()), this, SLOT(updateMulticopyStore()));
         tray->showMessage("Multicopy mode: ON", "Copy/Cut to append", QSystemTrayIcon::Information, 2000);
     }
@@ -326,7 +327,7 @@ void Clipper::updateMulticopyStore()
 {
     QTextDocument *doc = ui->textEdit->document();
     if (general["SplitIntoLines"])
-        doc->setPlainText(doc->toPlainText() + "\n" + clipboard->text());
+        doc->setPlainText(doc->toPlainText() + clipboard->text() + "\n");
     else
         doc->setPlainText(doc->toPlainText() + " " + clipboard->text());
     tray->showMessage("", "Data appended", QSystemTrayIcon::Information, 3000);
