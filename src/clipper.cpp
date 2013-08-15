@@ -30,7 +30,8 @@ Clipper::Clipper(QWidget *parent) :
     QMenu *trayMenu = new QMenu();
     trayMenu->addAction("Quit", qApp, SLOT(quit()));
 
-    tray = new QSystemTrayIcon(this);
+    tray = new QSystemTrayIcon();
+
 
     tray->setIcon(appIcon);
     tray->setContextMenu(trayMenu);
@@ -173,8 +174,15 @@ void Clipper::onTrayIconClicked(QSystemTrayIcon::ActivationReason reason)
 {
     if (reason == QSystemTrayIcon::DoubleClick)
     {
-        show();
-        updateSettingsGUI();
+        if (isVisible())
+        {
+            hide();
+        }
+        else
+        {
+            show();
+            updateSettingsGUI();
+        }
     }
 }
 

@@ -48,3 +48,4 @@ QMAKE_CXXFLAGS += -std=c++11
     hotkey/qxtglobal.h
 win32:SOURCES += hotkey/qxtglobalshortcut_win.cpp
 unix:!macx:SOURCES += hotkey/qxtglobalshortcut_x11.cpp
+unix:!macx:LIBS += -lX11
