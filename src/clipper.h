@@ -14,10 +14,12 @@
 #include <QTextDocument>
 #include <QMap>
 #include <QPixmap>
+#include <QDateTime>
 #include <QScreen>
 #include <QDesktopWidget>
 #include <QBuffer>
 #include <QDebug>
+#include <QFileDialog>
 #include <QTime>
 #include <QAction>
 #include "ui_clipper.h"
@@ -26,6 +28,7 @@
 #include "hotkey/qhotkeyedit.h"
 #include "clipperapis.h"
 #include "tnyczoptions.h"
+#include "imageselectwidget.h"
 
 namespace Ui {
 class Clipper;
@@ -48,7 +51,7 @@ public slots:
     void changeHotkey(QString hotkey);
     void saveSettings();
     void onTrayIconClicked(QSystemTrayIcon::ActivationReason reason);
-    void makeScreenshot();
+    void makeFullScreenshot();
     void reloadSettings();
     void historyItemToClipboard(QListWidgetItem* item);
     void makeQRCode();
@@ -56,6 +59,25 @@ public slots:
     void updateSettingsGUI();
     void toggleMulticopy();
     void updateMulticopyStore();
+    void makePartialScreenshot();
+    void saveScreenshotToFile(QPixmap screenshot);
+    inline QPixmap grabScreen()
+    {
+        QScreen *screen = QGuiApplication::primaryScreen();
+        return screen->grabWindow(0);
+    }
+    inline QByteArray pixmapToByteArray(QPixmap a)
+    {
+        QByteArray screenshotData;
+        QBuffer buffer(&screenshotData);
+        buffer.open(QIODevice::WriteOnly);
+        a.save(&buffer, "PNG");
+        return screenshotData;
+    }
+    inline QString getCurrentDatetime()
+    {
+        return QDateTime::currentDateTime().toString("dd.MM.yyyy hh.mm.ss");
+    }
 
 private:
     Ui::Clipper *ui;
@@ -72,11 +94,13 @@ private:
 
     QMap<QString, QString> shortcuts;
     QMap<QString, bool> general;
+    QString screenshotPath;
     QxtGlobalShortcut *linkShortenShortcut;
     QxtGlobalShortcut *tnyczPublishShortcut;
     QxtGlobalShortcut *screenshotShortcut;
     QxtGlobalShortcut *makeQRCodeShortcut;
     QxtGlobalShortcut *toggleMulticopyShortcut;
+    QxtGlobalShortcut *partialScreenshotShortcut;
     bool hotkeysInit = true;
 
 protected:

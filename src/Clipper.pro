@@ -24,12 +24,14 @@ SOURCES += main.cpp\
     clipperapis.cpp \
     tnyczoptions.cpp \
     hotkey/qhotkeyedit.cpp \
+    imageselectwidget.cpp
 
 HEADERS  += clipper.h \
     json/json.h \
     clipperapis.h \
     tnyczoptions.h \
-    hotkey/qhotkeyedit.h
+    hotkey/qhotkeyedit.h \
+    imageselectwidget.h
 
 RESOURCES += \
     Clipper.qrc

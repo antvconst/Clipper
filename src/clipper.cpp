@@ -42,6 +42,7 @@ Clipper::Clipper(QWidget *parent) :
     shortcutButtons.addButton(ui->makeScreenshotButton, 3);
     shortcutButtons.addButton(ui->makeQRCodeButton, 4);
     shortcutButtons.addButton(ui->toggleMulticopyButton, 5);
+    shortcutButtons.addButton(ui->makePartialScreenshotButton, 6);
 
     reloadSettings();
 
@@ -59,6 +60,18 @@ Clipper::Clipper(QWidget *parent) :
         {
             clipboard->setText(ui->textEdit->toPlainText());
             tray->showMessage("", "Data is copied into clipboard", QSystemTrayIcon::Information, 2000);
+        }
+    });
+    connect(ui->changeScreenshotPath, &QPushButton::clicked, [=]()
+    {
+        QString path = QFileDialog::getExistingDirectory(this,
+                                                         tr("Open Directory"),
+                                                         "",
+                                                         QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+        if (!path.isEmpty())
+        {
+            screenshotPath = path;
+            ui->screenshotPathEdit->setText(screenshotPath);
         }
     });
 }
@@ -154,6 +167,7 @@ void Clipper::saveSettings()
     settings->setValue("ShortenLink", ui->shortenLinkButton->text());
     settings->setValue("PastePublish", ui->publishPasteButton->text());
     settings->setValue("Screenshot", ui->makeScreenshotButton->text());
+    settings->setValue("PartialScreenshot", ui->makePartialScreenshotButton->text());
     settings->setValue("QRCode", ui->makeQRCodeButton->text());
     settings->setValue("Multicopy", ui->toggleMulticopyButton->text());
     settings->endGroup();
@@ -162,10 +176,13 @@ void Clipper::saveSettings()
     settings->setValue("LinkShortening", ui->linkShortening->isChecked());
     settings->setValue("PastePublishing", ui->pastePublishing->isChecked());
     settings->setValue("ScreenshotMaking", ui->screenshotMaking->isChecked());
+    settings->setValue("PartialScreenshotMaking", ui->partialScreenshotMaking->isChecked());
     settings->setValue("QRCodeMaking", ui->QRCode->isChecked());
     settings->setValue("Multicopy", ui->Multicopy->isChecked());
     settings->setValue("SplitIntoLines", ui->splitMulticopy->isChecked());
     settings->setValue("KeepHistory", ui->keepHistory->isChecked());
+    settings->setValue("SaveScreenshots", ui->saveScreenshots->isChecked());
+    settings->setValue("ScreenshotDir", ui->screenshotPathEdit->text());
     settings->endGroup();
     reloadSettings();
 }
@@ -186,16 +203,41 @@ void Clipper::onTrayIconClicked(QSystemTrayIcon::ActivationReason reason)
     }
 }
 
-void Clipper::makeScreenshot()
+void Clipper::makeFullScreenshot()
 {
-    QScreen *screen = QGuiApplication::primaryScreen();
-    QPixmap screenshot = screen->grabWindow(0);
-    QByteArray screenshotData;
-    QBuffer buffer(&screenshotData);
-    buffer.open(QIODevice::WriteOnly);
-    screenshot.save(&buffer, "PNG");
     tray->showMessage("", "Uploading screenshot, please wait..", QSystemTrayIcon::Information, 1000);
+    QPixmap screenshot = grabScreen();
+    QByteArray screenshotData = pixmapToByteArray(screenshot);
     api->imageshackUpload(screenshotData);
+    if (general["SaveScreenshots"])
+        saveScreenshotToFile(screenshot);
+}
+
+void Clipper::makePartialScreenshot()
+{
+    QPixmap screenshot = grabScreen();
+    ImageSelectWidget imageSelectDialog(&screenshot);
+    imageSelectDialog.setWindowState(Qt::WindowFullScreen);
+    if (!imageSelectDialog.exec())
+        return;
+    else
+    {
+        QByteArray screenshotData = pixmapToByteArray(screenshot);
+        api->imageshackUpload(screenshotData);
+        tray->showMessage("", "Uploading screenshot, please wait..", QSystemTrayIcon::Information, 1000);
+        if (general["SaveScreenshots"])
+            saveScreenshotToFile(screenshot);
+    }
+}
+
+void Clipper::saveScreenshotToFile(QPixmap screenshot)
+{
+    QFile file(screenshotPath+"/"+getCurrentDatetime()+".png");
+    qDebug() << file.fileName();
+    if (!file.open(QIODevice::WriteOnly))
+        tray->showMessage("Error saving screenshot", file.errorString(), QSystemTrayIcon::Warning, 1000);
+    screenshot.save(&file, "PNG");
+    file.close();
 }
 
 void Clipper::makeQRCode()
@@ -252,6 +294,11 @@ void Clipper::reloadSettings()
             screenshotShortcut->disconnect(this);
             delete screenshotShortcut;
         }
+        if (general["PartialScreenshotMaking"])
+        {
+            partialScreenshotShortcut->disconnect(this);
+            delete partialScreenshotShortcut;
+        }
         if (general["QRCodeMaking"])
         {
             toggleMulticopyShortcut->disconnect(this);
@@ -266,20 +313,23 @@ void Clipper::reloadSettings()
     else
         hotkeysInit = false;
 
-    shortcuts["ShortenLink"] = settings->value("Hotkeys/ShortenLink", "F6").toString();
-    shortcuts["PastePublish"] = settings->value("Hotkeys/PastePublish", "F7").toString();
-    shortcuts["Screenshot"] = settings->value("Hotkeys/Screenshot", "F8").toString();
-    shortcuts["QRCode"] = settings->value("Hotkeys/QRCode", "F9").toString();
+    shortcuts["ShortenLink"] = settings->value("Hotkeys/ShortenLink", "Shift+F6").toString();
+    shortcuts["PastePublish"] = settings->value("Hotkeys/PastePublish", "Shift+F7").toString();
+    shortcuts["Screenshot"] = settings->value("Hotkeys/Screenshot", "Shift+F10").toString();
+    shortcuts["PartialScreenshot"] = settings->value("Hotkeys/PartialScreenshot", "Shift+F11").toString();
+    shortcuts["QRCode"] = settings->value("Hotkeys/QRCode", "Shift+F9").toString();
     shortcuts["Multicopy"] = settings->value("Hotkeys/Multicopy", "Ctrl+Shift+C").toString();
 
     general["LinkShortening"] = settings->value("General/LinkShortening", "1").toBool();
     general["PastePublishing"] = settings->value("General/PastePublishing", "1").toBool();
     general["ScreenshotMaking"] = settings->value("General/ScreenshotMaking", "1").toBool();
+    general["PartialScreenshotMaking"] = settings->value("General/PartialScreenshotMaking", "1").toBool();
     general["QRCodeMaking"] = settings->value("General/QRCodeMaking", "1").toBool();
     general["Multicopy"] = settings->value("General/Multicopy", "1").toBool();
     general["SplitIntoLines"] = settings->value("General/SplitIntoLines", "1").toBool();
     general["KeepHistory"] = settings->value("General/KeepHistory", "1").toBool();
-
+    general["SaveScreenshots"] = settings->value("General/SaveScreenshots", "1").toBool();
+    screenshotPath = settings->value("General/ScreenshotDir", QDir::homePath()+"/Screenshots").toString();
     if (general["LinkShortening"])
     {
         linkShortenShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["ShortenLink"]));
@@ -293,7 +343,12 @@ void Clipper::reloadSettings()
     if (general["ScreenshotMaking"])
     {
         screenshotShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["Screenshot"]));
-        connect(screenshotShortcut, SIGNAL(activated()), this, SLOT(makeScreenshot()));
+        connect(screenshotShortcut, SIGNAL(activated()), this, SLOT(makeFullScreenshot()));
+    }
+    if (general["PartialScreenshotMaking"])
+    {
+        partialScreenshotShortcut = new QxtGlobalShortcut(QKeySequence(shortcuts["PartialScreenshot"]));
+        connect(partialScreenshotShortcut, SIGNAL(activated()), this, SLOT(makePartialScreenshot()));
     }
     if (general["QRCodeMaking"])
     {
@@ -346,16 +401,20 @@ void Clipper::updateSettingsGUI()
     ui->shortenLinkButton->setText(shortcuts["ShortenLink"]);
     ui->publishPasteButton->setText(shortcuts["PastePublish"]);
     ui->makeScreenshotButton->setText(shortcuts["Screenshot"]);
+    ui->makePartialScreenshotButton->setText(shortcuts["PartialScreenshot"]);
     ui->makeQRCodeButton->setText(shortcuts["QRCode"]);
     ui->toggleMulticopyButton->setText(shortcuts["Multicopy"]);
 
     ui->linkShortening->setChecked(general["LinkShortening"]);
     ui->pastePublishing->setChecked(general["PastePublishing"]);
     ui->screenshotMaking->setChecked(general["ScreenshotMaking"]);
+    ui->partialScreenshotMaking->setChecked(general["PartialScreenshotMaking"]);
     ui->QRCode->setChecked(general["QRCodeMaking"]);
     ui->Multicopy->setChecked(general["Multicopy"]);
     ui->splitMulticopy->setChecked(general["SplitIntoLines"]);
     ui->keepHistory->setChecked(general["KeepHistory"]);
+    ui->saveScreenshots->setChecked(general["SaveScreenshots"]);
+    ui->screenshotPathEdit->setText(screenshotPath);
 }
 
 void Clipper::historyItemToClipboard(QListWidgetItem *item)
