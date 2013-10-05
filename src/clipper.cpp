@@ -205,9 +205,9 @@ void Clipper::onTrayIconClicked(QSystemTrayIcon::ActivationReason reason)
 
 void Clipper::makeFullScreenshot()
 {
-    tray->showMessage("", "Uploading screenshot, please wait..", QSystemTrayIcon::Information, 1000);
     QPixmap screenshot = grabScreen();
     QByteArray screenshotData = pixmapToByteArray(screenshot);
+    tray->showMessage("", "Uploading screenshot, please wait..", QSystemTrayIcon::Information, 1000);
     api->imageshackUpload(screenshotData);
     if (general["SaveScreenshots"])
         saveScreenshotToFile(screenshot);
@@ -233,7 +233,6 @@ void Clipper::makePartialScreenshot()
 void Clipper::saveScreenshotToFile(QPixmap screenshot)
 {
     QFile file(screenshotPath+"/"+getCurrentDatetime()+".png");
-    qDebug() << file.fileName();
     if (!file.open(QIODevice::WriteOnly))
         tray->showMessage("Error saving screenshot", file.errorString(), QSystemTrayIcon::Warning, 1000);
     screenshot.save(&file, "PNG");
