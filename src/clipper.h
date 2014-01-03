@@ -25,7 +25,7 @@
 #include "ui_clipper.h"
 
 #include "libs/qhotkeyedit/qhotkeyedit.h"
-#include "libs/uglobalhotkeys/uglobalhotkeys.h"
+#include "UGlobalHotkey/uglobalhotkeys.h"
 #include "clipperapis.h"
 #include "tnyczoptions.h"
 #include "imageselectwidget.h"
