@@ -60,19 +60,19 @@ public slots:
     void toggleMulticopy();
     void updateMulticopyStore();
     void makePartialScreenshot();
-    void saveScreenshotToFile(QPixmap screenshot);
+    void saveScreenshotToFile(QPixmap *screenshot);
     void onHotkeyActivated(size_t id);
     inline QPixmap grabScreen()
     {
         QScreen *screen = QGuiApplication::primaryScreen();
         return screen->grabWindow(0);
     }
-    inline QByteArray pixmapToByteArray(QPixmap a)
+    inline QByteArray pixmapToByteArray(QPixmap *a)
     {
         QByteArray screenshotData;
         QBuffer buffer(&screenshotData);
         buffer.open(QIODevice::WriteOnly);
-        a.save(&buffer, "PNG");
+        a->save(&buffer, "PNG");
         return screenshotData;
     }
     inline QString getCurrentDatetime()
@@ -96,6 +96,8 @@ private:
     QMap<QString, QString> shortcuts;
     QMap<QString, bool> general;
     QString screenshotPath;
+    QString historyFilePath;
+    QFile *historyFile = nullptr;
     UGlobalHotkeys *hotkeys;
 
 protected:

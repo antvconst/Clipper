@@ -29,7 +29,7 @@ public slots:
     void onPasteLinkReady(QNetworkReply *reply);
     void googleLinkShorten(QString link);
     void tnyczPublish(QString text, QString title, QString password, bool is_code, bool is_private, bool is_protected);
-    void imageshackUpload(QByteArray &picture);
+    void imageshackUpload(QByteArray *picture);
     void onImageshackUploaded(QNetworkReply* response);
     void textToQRCode(QString text);
     void onQRCodeReplyReady(QNetworkReply* reply);

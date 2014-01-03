@@ -75,6 +75,16 @@ Clipper::Clipper(QWidget *parent) :
             ui->screenshotPathEdit->setText(screenshotPath);
         }
     });
+    connect(ui->changeHistoryFilePath, &QPushButton::clicked, [=]()
+    {
+        QString path = QFileDialog::getSaveFileName(0, "History file",
+                                                    QDir::homePath());
+        if (!path.isEmpty())
+        {
+            historyFilePath = path;
+            ui->historyPathEdit->setText(historyFilePath);
+        }
+    });
 }
 
 Clipper::~Clipper()
@@ -137,6 +147,8 @@ void Clipper::updateHistory()
         ui->listWidget->addItem(newText);
         ui->listWidget->itemAt(ui->listWidget->count(), 0)->setToolTip(QTime::currentTime().toString());
     }
+    QTextStream historyFileStream(historyFile);
+    historyFileStream << QString("----------------%1----------------\n %2 \n\n").arg(getCurrentDatetime(), newText);
 }
 
 void Clipper::onChangeHotkeyButtonClicked(int id)
@@ -184,6 +196,7 @@ void Clipper::saveSettings()
     settings->setValue("KeepHistory", ui->keepHistory->isChecked());
     settings->setValue("SaveScreenshots", ui->saveScreenshots->isChecked());
     settings->setValue("ScreenshotDir", ui->screenshotPathEdit->text());
+    settings->setValue("HistoryFilePath", ui->historyPathEdit->text());
     settings->endGroup();
     reloadSettings();
 }
@@ -206,37 +219,39 @@ void Clipper::onTrayIconClicked(QSystemTrayIcon::ActivationReason reason)
 
 void Clipper::makeFullScreenshot()
 {
-    QPixmap screenshot = grabScreen();
-    QByteArray screenshotData = pixmapToByteArray(screenshot);
+    QPixmap *screenshot = new QPixmap(grabScreen());
+    QByteArray *screenshotData = new QByteArray(pixmapToByteArray(screenshot));
     tray->showMessage("", "Uploading screenshot, please wait..", QSystemTrayIcon::Information, 1000);
     api->imageshackUpload(screenshotData);
     if (general["SaveScreenshots"])
         saveScreenshotToFile(screenshot);
+    delete screenshot;
 }
 
 void Clipper::makePartialScreenshot()
 {
-    QPixmap screenshot = grabScreen();
-    ImageSelectWidget imageSelectDialog(&screenshot);
+    QPixmap *screenshot = new QPixmap(grabScreen());
+    ImageSelectWidget imageSelectDialog(screenshot);
     imageSelectDialog.setWindowState(Qt::WindowFullScreen);
     if (!imageSelectDialog.exec())
         return;
     else
     {
-        QByteArray screenshotData = pixmapToByteArray(screenshot);
+        QByteArray *screenshotData = new QByteArray(pixmapToByteArray(screenshot));
         api->imageshackUpload(screenshotData);
         tray->showMessage("", "Uploading screenshot, please wait..", QSystemTrayIcon::Information, 1000);
         if (general["SaveScreenshots"])
             saveScreenshotToFile(screenshot);
     }
+    delete screenshot;
 }
 
-void Clipper::saveScreenshotToFile(QPixmap screenshot)
+void Clipper::saveScreenshotToFile(QPixmap *screenshot)
 {
     QFile file(screenshotPath+"/"+getCurrentDatetime()+".png");
     if (!file.open(QIODevice::WriteOnly))
         tray->showMessage("Error saving screenshot", file.errorString(), QSystemTrayIcon::Warning, 1000);
-    screenshot.save(&file, "PNG");
+    screenshot->save(&file, "PNG");
     file.close();
 }
 
@@ -318,6 +333,7 @@ void Clipper::reloadSettings()
     general["KeepHistory"] = settings->value("General/KeepHistory", "1").toBool();
     general["SaveScreenshots"] = settings->value("General/SaveScreenshots", "1").toBool();
     screenshotPath = settings->value("General/ScreenshotDir", QDir::homePath()+"/Screenshots").toString();
+    historyFilePath = settings->value("General/HistoryFilePath", QDir::homePath()+"/ClipboardHistory.txt").toString();
 
     if (general["LinkShortening"])
         hotkeys->registerHotkey(UKeySequence(shortcuts["ShortenLink"]), 0);
@@ -338,7 +354,17 @@ void Clipper::reloadSettings()
         hotkeys->registerHotkey(UKeySequence(shortcuts["Multicopy"]), 5);
 
     if (general["KeepHistory"])
-        connect(clipboard, SIGNAL(dataChanged()), this, SLOT(updateHistory()));
+    {
+        disconnect(clipboard, SIGNAL(dataChanged()), this, SLOT(updateHistory()));
+        if (historyFile != nullptr)
+        {
+            historyFile->close();
+            delete historyFile;
+        }
+        historyFile = new QFile(historyFilePath);
+        historyFile->open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text);
+        connect(clipboard, SIGNAL(dataChanged()), this, SLOT(updateHistory()), Qt::UniqueConnection);
+    }
 
     connect(hotkeys, SIGNAL(activated(size_t)), this, SLOT(onHotkeyActivated(size_t)), Qt::UniqueConnection);
 }
@@ -392,6 +418,7 @@ void Clipper::updateSettingsGUI()
     ui->keepHistory->setChecked(general["KeepHistory"]);
     ui->saveScreenshots->setChecked(general["SaveScreenshots"]);
     ui->screenshotPathEdit->setText(screenshotPath);
+    ui->historyPathEdit->setText(historyFilePath);
 }
 
 void Clipper::historyItemToClipboard(QListWidgetItem *item)

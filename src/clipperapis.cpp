@@ -22,6 +22,7 @@ void ClipperAPIs::onLinkShortened(QNetworkReply* reply)
 {
     QVariantMap response = JSON::parse(reply->readAll()).toMap();
     emit linkReady((response["id"].toString()));
+    delete reply;
 }
 
 void ClipperAPIs::tnyczPublish
@@ -47,9 +48,10 @@ void ClipperAPIs::onPasteLinkReady(QNetworkReply *reply)
 {
     emit linkReady("http://tny.cz/"+JSON::parse(
                        reply->readAll()).toMap()["result"].toMap()["response"].toString());
+    delete reply;
 }
 
-void ClipperAPIs::imageshackUpload(QByteArray &picture)
+void ClipperAPIs::imageshackUpload(QByteArray *picture)
 {
     QNetworkAccessManager *manager = new QNetworkAccessManager();
     QNetworkRequest request(QUrl("https://post.imageshack.us/upload_api.php"));
@@ -74,7 +76,7 @@ void ClipperAPIs::imageshackUpload(QByteArray &picture)
     requestData.append(QString("file; name=\"fileupload\"; filename=\"%1.png\"\r\n").arg(QTime::currentTime().toString()));
     requestData.append("Content-Transfer-Encoding: binary\r\n");
     requestData.append("\r\n");
-    requestData.append(picture);
+    requestData.append(*picture);
     requestData.append("\r\n");
 
     requestData.append("--AyV04a\r\n");
@@ -84,6 +86,7 @@ void ClipperAPIs::imageshackUpload(QByteArray &picture)
     requestData.append("json\r\n");
     requestData.append("--AyV04a--");
 
+    delete picture;
     manager->post(request, requestData);
     connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onImageshackUploaded(QNetworkReply*)));
 }
@@ -93,6 +96,7 @@ void ClipperAPIs::onImageshackUploaded(QNetworkReply *response)
     QVariantMap responseMap = JSON::parse(response->readAll()).toMap();
     QVariantMap linkMap = responseMap["links"].toMap();
     emit linkReady(linkMap["image_link"].toString());
+    delete response;
 }
 
 void ClipperAPIs::textToQRCode(QString text)
@@ -112,5 +116,6 @@ void ClipperAPIs::onQRCodeReplyReady(QNetworkReply *reply)
     QPixmap *qrCode = new QPixmap();
     qrCode->loadFromData(reply->readAll());
     emit qrCodeReady(qrCode);
+    delete reply;
 }
 
