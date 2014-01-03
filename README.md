@@ -25,4 +25,5 @@ Prebuild binary packages are available at [project's webpage](http://clipperapp.
 4. Run 'make'.
 5. Run 'sudo make install'.
 
-*Includes modified parts of [libqxt](http://libqxt.org) and [K8JSON](https://gitorious.org/k8jsonqt).*
+*Includes modified [K8JSON](https://gitorious.org/k8jsonqt).*
+*Uses [UGlobalHotkey](https://github.com/falceeffect/UGlobalHotkey) library.*

@@ -24,8 +24,8 @@
 #include <QAction>
 #include "ui_clipper.h"
 
-#include "hotkey/qxtglobalshortcut.h"
-#include "hotkey/qhotkeyedit.h"
+#include "libs/qhotkeyedit/qhotkeyedit.h"
+#include "libs/uglobalhotkeys/uglobalhotkeys.h"
 #include "clipperapis.h"
 #include "tnyczoptions.h"
 #include "imageselectwidget.h"
@@ -61,6 +61,7 @@ public slots:
     void updateMulticopyStore();
     void makePartialScreenshot();
     void saveScreenshotToFile(QPixmap screenshot);
+    void onHotkeyActivated(size_t id);
     inline QPixmap grabScreen()
     {
         QScreen *screen = QGuiApplication::primaryScreen();
@@ -95,13 +96,7 @@ private:
     QMap<QString, QString> shortcuts;
     QMap<QString, bool> general;
     QString screenshotPath;
-    QxtGlobalShortcut *linkShortenShortcut;
-    QxtGlobalShortcut *tnyczPublishShortcut;
-    QxtGlobalShortcut *screenshotShortcut;
-    QxtGlobalShortcut *makeQRCodeShortcut;
-    QxtGlobalShortcut *toggleMulticopyShortcut;
-    QxtGlobalShortcut *partialScreenshotShortcut;
-    bool hotkeysInit = true;
+    UGlobalHotkeys *hotkeys;
 
 protected:
     void closeEvent(QCloseEvent *event);

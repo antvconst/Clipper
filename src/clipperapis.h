@@ -12,7 +12,7 @@
 #include <QTime>
 #include <QDebug>
 
-#include "json/json.h"
+#include "libs/json/json.h"
 
 class ClipperAPIs : public QObject
 {

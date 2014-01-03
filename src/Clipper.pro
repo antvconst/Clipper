@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network gui-private widgets
+QT       += core gui network widgets
 
 TARGET = Clipper
 
@@ -20,17 +20,17 @@ RC_FILE = icon.rc
 
 SOURCES += main.cpp\
            clipper.cpp \
-           json/json.cpp \
+           libs/json/json.cpp \
     clipperapis.cpp \
     tnyczoptions.cpp \
-    hotkey/qhotkeyedit.cpp \
+    libs/qhotkeyedit/qhotkeyedit.cpp \
     imageselectwidget.cpp
 
 HEADERS  += clipper.h \
-    json/json.h \
+    libs/json/json.h \
     clipperapis.h \
     tnyczoptions.h \
-    hotkey/qhotkeyedit.h \
+    libs/qhotkeyedit/qhotkeyedit.h \
     imageselectwidget.h
 
 RESOURCES += \
@@ -39,15 +39,11 @@ RESOURCES += \
 FORMS += \
     tnyczoptions.ui \
     clipper.ui \
-    hotkey/qkeyedit.ui
+    libs/qhotkeyedit/qkeyedit.ui
 
 QMAKE_CXXFLAGS += -std=c++11
 
-# Qxt
-!macx:SOURCES += hotkey/qxtglobalshortcut.cpp
-!macx:HEADERS += \
-    hotkey/qxtglobalshortcut.h \
-    hotkey/qxtglobal.h
-win32:SOURCES += hotkey/qxtglobalshortcut_win.cpp
-unix:!macx:SOURCES += hotkey/qxtglobalshortcut_x11.cpp
-unix:!macx:LIBS += -lX11
+unix|win32: LIBS += -L$$PWD/../../libs/UGlobalHotkey/ -lUGlobalHotkey
+
+INCLUDEPATH += $$PWD/../../libs/UGlobalHotkey
+DEPENDPATH += $$PWD/../../libs/UGlobalHotkey

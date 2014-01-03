@@ -111,7 +111,6 @@ void ClipperAPIs::onQRCodeReplyReady(QNetworkReply *reply)
 {
     QPixmap *qrCode = new QPixmap();
     qrCode->loadFromData(reply->readAll());
-    qDebug() << "emited";
     emit qrCodeReady(qrCode);
 }
 
