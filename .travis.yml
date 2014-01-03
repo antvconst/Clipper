@@ -4,6 +4,10 @@ install:
     - sudo apt-get install -qq qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev git
 
 script:
+    - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+    - sudo apt-get update -qq
+    - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
+    - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
     - git clone https://github.com/falceeffect/UGlobalHotkey.git ../UGlobalHotkey/UGlobalHotkey
     - cd ../UGlobalHotkey
     - qmake -qt=qt5 ./UGlobalHotkey/uglobalhotkey.pro
