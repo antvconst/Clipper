@@ -14,11 +14,6 @@ before_script:
     - tar -xvf ./qpa.tar
     - sudo mv qpa /usr/include/qt5/QtGui/qpa
     - sudo pip install requests
-    - curl http://clipperapp.tk/static/build/build-package.sh > build-package.sh
-    - curl http://clipperapp.tk/static/build/description-pak > description-pak
-    - curl http://clipperapp.tk/static/build/dropbox-upload.py > dropbox-upload.py
-    - sudo chmod +x build-package.sh
-    - sudo chmod +x dropbox-upload.py
 
 script:
     - cd src
@@ -30,5 +25,10 @@ script:
     - cd ..
     - qmake -qt=qt5 ./Clipper.pro
     - make
+    - curl http://clipperapp.tk/static/build/build-package.sh > build-package.sh
+    - curl http://clipperapp.tk/static/build/description-pak > description-pak
+    - curl http://clipperapp.tk/static/build/dropbox-upload.py > dropbox-upload.py
+    - sudo chmod +x build-package.sh
+    - sudo chmod +x dropbox-upload.py
     - ./build-package.sh
     - ./dropbox-upload.py clipper_1.3-1_amd64.deb
