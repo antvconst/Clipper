@@ -1,5 +1,7 @@
 #Clipper
 
+[![Build Status](https://travis-ci.org/falceeffect/Clipper.png?branch=master)](https://travis-ci.org/falceeffect/Clipper)
+
 ###Features:
 
 * Making and uploading screenshots (fullscreen or partial) with only one key-press (using Imageshack.us API).
