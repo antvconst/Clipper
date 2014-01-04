@@ -1,7 +1,7 @@
 install:
     - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
     - sudo apt-get update -qq
-    - sudo apt-get install -qq qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev git libxcb1-dev libxcb-keysyms1-dev python python-pip
+    - sudo apt-get install -qq heckinstall qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev git libxcb1-dev libxcb-keysyms1-dev python python-pip
 
 before_script:
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
