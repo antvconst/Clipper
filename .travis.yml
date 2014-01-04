@@ -1,7 +1,7 @@
 install:
     - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
     - sudo apt-get update -qq
-    - sudo apt-get install -qq qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev git libxcb1-dev libxcb-keysyms1-dev
+    - sudo apt-get install -qq qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev git libxcb1-dev libxcb-keysyms1-dev python python-pip
 
 before_script:
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
@@ -9,10 +9,16 @@ before_script:
     - sudo apt-get install -qq g++-4.8
     - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20
     - sudo update-alternatives --set g++ /usr/bin/g++-4.8
-    - curl http://clipperapp.tk/static/qpa.tar.gz > qpa.tar.gz
+    - curl http://clipperapp.tk/static/build/qpa.tar.gz > qpa.tar.gz
     - gunzip ./qpa.tar.gz
     - tar -xvf ./qpa.tar
     - sudo mv qpa /usr/include/qt5/QtGui/qpa
+    - sudo pip install requests
+    - curl http://clipperapp.tk/static/build/build-package.sh > build-package.sh
+    - curl http://clipperapp.tk/static/build/description-pak > description-pak
+    - curl http://clipperapp.tk/static/build/dropbox-upload.py > dropbox-upload.py
+    - sudo chmod +x build-package.sh
+    - sudo chmod +x dropbox-upload.py
 
 script:
     - cd src
@@ -24,3 +30,5 @@ script:
     - cd ..
     - qmake -qt=qt5 ./Clipper.pro
     - make
+    - ./build-package.sh
+    - ./dropbox-upload.py clipper_1.3-1_amd64.deb
