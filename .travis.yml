@@ -1,7 +1,7 @@
 install:
     - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
     - sudo apt-get update -qq
-    - sudo apt-get install -qq qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev git
+    - sudo apt-get install -qq qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev git libxcb1-dev libxcb-keysyms1-dev
 
 before_script:
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
@@ -11,10 +11,11 @@ before_script:
     - sudo update-alternatives --set g++ /usr/bin/g++-4.8
 
 script:
-    - git clone https://github.com/falceeffect/UGlobalHotkey.git ../UGlobalHotkey/UGlobalHotkey
-    - cd ../UGlobalHotkey
+    - cd src
+    - git clone https://github.com/falceeffect/UGlobalHotkey.git ./libs/UGlobalHotkey/UGlobalHotkey
+    - cd ./libs/UGlobalHotkey
     - qmake -qt=qt5 ./UGlobalHotkey/uglobalhotkey.pro
     - make
-    - cd ../Clipper/src
-    - qmake -qt=qt5
+    - cd ..
+    - qmake -qt=qt5 ./Clipper.pro
     - make

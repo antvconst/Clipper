@@ -43,7 +43,7 @@ FORMS += \
 
 QMAKE_CXXFLAGS += -std=c++11
 
-unix|win32: LIBS += -L$$PWD/../../libs/UGlobalHotkey/ -lUGlobalHotkey
+unix|win32: LIBS += -L$$PWD/libs/UGlobalHotkey/ -lUGlobalHotkey
 
-INCLUDEPATH += $$PWD/../../libs/UGlobalHotkey
-DEPENDPATH += $$PWD/../../libs/UGlobalHotkey
+INCLUDEPATH += $$PWD/libs/UGlobalHotkey
+DEPENDPATH += $$PWD/libs/UGlobalHotkey
