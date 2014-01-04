@@ -31,4 +31,4 @@ script:
     - sudo chmod +x build-package.sh
     - sudo chmod +x dropbox-upload.py
     - ./build-package.sh
-    - ./dropbox-upload.py clipper_1.3-1_amd64.deb
+    - python ./dropbox-upload.py clipper_1.3-1_amd64.deb
