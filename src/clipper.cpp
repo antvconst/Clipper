@@ -44,6 +44,7 @@ Clipper::Clipper(QWidget *parent) :
     shortcutButtons.addButton(ui->makeQRCodeButton, 4);
     shortcutButtons.addButton(ui->toggleMulticopyButton, 5);
     shortcutButtons.addButton(ui->makePartialScreenshotButton, 6);
+    shortcutButtons.addButton(ui->mainWindowButton, 7);
 
     reloadSettings();
 
@@ -183,6 +184,7 @@ void Clipper::saveSettings()
     settings->setValue("PartialScreenshot", ui->makePartialScreenshotButton->text());
     settings->setValue("QRCode", ui->makeQRCodeButton->text());
     settings->setValue("Multicopy", ui->toggleMulticopyButton->text());
+    settings->setValue("MainWindow", ui->mainWindowButton->text());
     settings->endGroup();
 
     settings->beginGroup("General");
@@ -195,6 +197,7 @@ void Clipper::saveSettings()
     settings->setValue("SplitIntoLines", ui->splitMulticopy->isChecked());
     settings->setValue("KeepHistory", ui->keepHistory->isChecked());
     settings->setValue("SaveScreenshots", ui->saveScreenshots->isChecked());
+    settings->setValue("EnableMainWindowShortcut", ui->mainWindowShortcutCheckBox->isChecked());
     settings->setValue("ScreenshotDir", ui->screenshotPathEdit->text());
     settings->setValue("HistoryFilePath", ui->historyPathEdit->text());
     settings->endGroup();
@@ -277,6 +280,10 @@ void Clipper::onHotkeyActivated(size_t id)
     case 5:
         toggleMulticopy();
         break;
+    case 6:
+        this->show();
+        this->updateSettingsGUI();
+        break;
     };
 }
 
@@ -322,6 +329,7 @@ void Clipper::reloadSettings()
     shortcuts["PartialScreenshot"] = settings->value("Hotkeys/PartialScreenshot", "Shift+F11").toString();
     shortcuts["QRCode"] = settings->value("Hotkeys/QRCode", "Shift+F9").toString();
     shortcuts["Multicopy"] = settings->value("Hotkeys/Multicopy", "Ctrl+Shift+C").toString();
+    shortcuts["MainWindow"] = settings->value("Hotkeys/MainWindow", "Alt+Shift+F12").toString();
 
     general["LinkShortening"] = settings->value("General/LinkShortening", "1").toBool();
     general["PastePublishing"] = settings->value("General/PastePublishing", "1").toBool();
@@ -332,6 +340,7 @@ void Clipper::reloadSettings()
     general["SplitIntoLines"] = settings->value("General/SplitIntoLines", "1").toBool();
     general["KeepHistory"] = settings->value("General/KeepHistory", "1").toBool();
     general["SaveScreenshots"] = settings->value("General/SaveScreenshots", "1").toBool();
+    general["EnableMainWindowShortcut"] = settings->value("General/EnableMainWindowShortcut", "1").toBool();
     screenshotPath = settings->value("General/ScreenshotDir", QDir::homePath()+"/Screenshots").toString();
     historyFilePath = settings->value("General/HistoryFilePath", QDir::homePath()+"/ClipboardHistory.txt").toString();
 
@@ -352,6 +361,9 @@ void Clipper::reloadSettings()
 
     if (general["Multicopy"])
         hotkeys->registerHotkey(UKeySequence(shortcuts["Multicopy"]), 5);
+
+    if (general["EnableMainWindowShortcut"])
+        hotkeys->registerHotkey(UKeySequence(shortcuts["MainWindow"]), 6);
 
     if (general["KeepHistory"])
     {
@@ -407,6 +419,7 @@ void Clipper::updateSettingsGUI()
     ui->makePartialScreenshotButton->setText(shortcuts["PartialScreenshot"]);
     ui->makeQRCodeButton->setText(shortcuts["QRCode"]);
     ui->toggleMulticopyButton->setText(shortcuts["Multicopy"]);
+    ui->mainWindowButton->setText(shortcuts["MainWindow"]);
 
     ui->linkShortening->setChecked(general["LinkShortening"]);
     ui->pastePublishing->setChecked(general["PastePublishing"]);
@@ -417,6 +430,7 @@ void Clipper::updateSettingsGUI()
     ui->splitMulticopy->setChecked(general["SplitIntoLines"]);
     ui->keepHistory->setChecked(general["KeepHistory"]);
     ui->saveScreenshots->setChecked(general["SaveScreenshots"]);
+    ui->mainWindowShortcutCheckBox->setChecked(general["EnableMainWindowShortcut"]);
     ui->screenshotPathEdit->setText(screenshotPath);
     ui->historyPathEdit->setText(historyFilePath);
 }
