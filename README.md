@@ -21,11 +21,12 @@ Prebuild binary packages are available at [project's webpage](http://clipperapp.
 
 ###Building from source code:
 
-1. Install Qt 5.0 or greater (Qt 5.1 recommended).
-2. Go to 'src' folder.
-3. Run 'qmake'.
-4. Run 'make'.
-5. Run 'sudo make install'.
+Run following commands from 'Clipper' directory.
+
+* `mkdir build`
+* `../src/configure`
+* `make`
+* `sudo make install`
 
 *Includes modified [K8JSON](https://gitorious.org/k8jsonqt).*
 *Uses [UGlobalHotkey](https://github.com/falceeffect/UGlobalHotkey) library.*

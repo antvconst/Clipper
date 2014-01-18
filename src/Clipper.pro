@@ -6,16 +6,27 @@
 
 QT       += core gui network widgets
 
-TARGET = Clipper
+TARGET = clipper
 
 TEMPLATE = app
 
 unix {
-target.path = /usr/bin/
-INSTALLS += target
+binary.files = $$OUT_PWD/clipper
+binary.path = /usr/bin
+
+desktop.files = misc/Clipper.desktop
+desktop.path = ~/.local/share/applications
+
+icon.files = misc/clipper.png
+icon.path = ~/.local/share/icons
+
+libs.files = libs/UGlobalHotkey/libUGlobalHotkey.*
+libs.path = /usr/lib
+
+INSTALLS += binary libs desktop icon
 }
 win32{
-RC_FILE = icon.rc
+RC_FILE = misc/icon.rc
 }
 
 SOURCES += main.cpp\

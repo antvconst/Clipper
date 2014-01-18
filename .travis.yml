@@ -16,19 +16,13 @@ before_script:
     - sudo pip install requests
 
 script:
-    - cd src
-    - git clone https://github.com/falceeffect/UGlobalHotkey.git ./libs/UGlobalHotkey/UGlobalHotkey
-    - cd ./libs/UGlobalHotkey
-    - qmake -qt=qt5 ./UGlobalHotkey/uglobalhotkey.pro
-    - make
-    - cd ..
-    - cd ..
-    - qmake -qt=qt5 ./Clipper.pro
+    - mkdir build
+    - ../src/configure
     - make
     - curl http://clipperapp.tk/static/build/build-package.sh > build-package.sh
     - curl http://clipperapp.tk/static/build/description-pak > description-pak
-    - curl http://clipperapp.tk/static/build/dropbox-upload.py > dropbox-upload.py
+    - curl http://clipperapp.tk/static/build/dropbox-upload.py > dbupload.py
     - sudo chmod +x build-package.sh
-    - sudo chmod +x dropbox-upload.py
+    - sudo chmod +x dbupload.py
     - ./build-package.sh
-    - python ./dropbox-upload.py clipper_1.3-1_amd64.deb
+    - python ./dbupload.py -f clipper_1.3-1_amd64.deb -u falceeffect -t

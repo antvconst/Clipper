@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/clipper
+Name=Clipper
+GenericName=Universal utility
+Icon=clipper
+Terminal=false
+Categories=Network;

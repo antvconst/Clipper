@@ -1,0 +1,15 @@
+#!/bin/bash
+
+BUILD_DIR=$PWD
+BASEDIR=$(dirname $0)
+
+echo "Preparing to build Clipper"
+echo "Building UGlobalHotkey library"
+git clone https://github.com/falceeffect/UGlobalHotkey $BASEDIR/libs/UGlobalHotkey/UGlobalHotkey
+cd $BASEDIR/libs/UGlobalHotkey
+qmake UGlobalHotkey
+make
+echo "Done"
+cd $BUILD_DIR
+qmake $BASEDIR
+echo "Configuration done. Run 'make' to proceed."
