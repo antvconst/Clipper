@@ -16,10 +16,9 @@ before_script:
     - sudo pip install requests
 
 script:
-    - chmod +x src/configure
-    - mkdir build
-    - cd build
-    - ../src/configure travis
+    - cd src
+    - chmod +x configure
+    - ./configure travis
     - make
     - curl http://clipperapp.tk/static/build/build-package.sh > build-package.sh
     - curl http://clipperapp.tk/static/build/description-pak > description-pak

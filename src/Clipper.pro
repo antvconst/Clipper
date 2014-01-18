@@ -15,10 +15,10 @@ binary.files = $$OUT_PWD/clipper
 binary.path = /usr/bin
 
 desktop.files = misc/Clipper.desktop
-desktop.path = ~/.local/share/applications
+desktop.path = /usr/share/applications
 
 icon.files = misc/clipper.png
-icon.path = ~/.local/share/icons
+icon.path = /usr/share/icons
 
 libs.files = libs/UGlobalHotkey/libUGlobalHotkey.*
 libs.path = /usr/lib

@@ -21,10 +21,9 @@ Prebuild binary packages are available at [project's webpage](http://clipperapp.
 
 ###Building from source code:
 
-Run following commands from 'Clipper' directory.
+Run following commands from 'Clipper/src' directory.
 
-* `mkdir build`
-* `../src/configure`
+* `./configure`
 * `make`
 * `sudo make install`
 
