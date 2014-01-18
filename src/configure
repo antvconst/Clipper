@@ -3,13 +3,20 @@
 BUILD_DIR=$PWD
 BASEDIR=$(dirname $0)
 
+if [ "$1" = "travis" ]
+then
+	QMAKE="qmake -qt=qt5"
+else
+	QMAKE="qmake"
+fi
+
 echo "Preparing to build Clipper"
 echo "Building UGlobalHotkey library"
 git clone https://github.com/falceeffect/UGlobalHotkey $BASEDIR/libs/UGlobalHotkey/UGlobalHotkey
 cd $BASEDIR/libs/UGlobalHotkey
-qmake UGlobalHotkey
+$QMAKE UGlobalHotkey
 make
 echo "Done"
 cd $BUILD_DIR
-qmake $BASEDIR
+$QMAKE $BASEDIR
 echo "Configuration done. Run 'make' to proceed."

@@ -19,7 +19,7 @@ script:
     - chmod +x src/configure
     - mkdir build
     - cd build
-    - ../src/configure
+    - ../src/configure travis
     - make
     - curl http://clipperapp.tk/static/build/build-package.sh > build-package.sh
     - curl http://clipperapp.tk/static/build/description-pak > description-pak
