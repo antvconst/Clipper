@@ -23,7 +23,7 @@ script:
     - make
     - curl http://clipperapp.tk/static/build/build-package.sh > build-package.sh
     - curl http://clipperapp.tk/static/build/description-pak > description-pak
-    - curl http://clipperapp.tk/static/build/dropbox-upload.py > dbupload.py
+    - curl http://clipperapp.tk/static/build/dbupload.py > dbupload.py
     - sudo chmod +x build-package.sh
     - sudo chmod +x dbupload.py
     - ./build-package.sh
