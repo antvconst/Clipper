@@ -1,0 +1,1 @@
+sudo checkinstall --pkgname="clipper" --pkgversion="1.3" --pkgrelease="1" --pkglicense="GPL" --maintainer="Anton Konstantinov \<falceeffected@gmail.com\>" --provides="clipper" --requires="libqt5network5,libqt5core5,libqt5gui5,libqt5widgets5,libxcb1,libgl1,libxcb-keysyms1" -y
