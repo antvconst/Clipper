@@ -9,7 +9,7 @@ before_script:
     - sudo apt-get install -qq g++-4.8
     - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20
     - sudo update-alternatives --set g++ /usr/bin/g++-4.8
-    - curl http://clipperapp.tk/static/build/qpa.tar.gz > qpa.tar.gz
+    - wget http://clipperapp.tk/static/build/qpa.tar.gz
     - gunzip ./qpa.tar.gz
     - tar -xvf ./qpa.tar
     - sudo mv qpa /usr/include/qt5/QtGui/qpa
@@ -20,9 +20,9 @@ script:
     - chmod +x configure
     - ./configure travis
     - make
-    - curl http://clipperapp.tk/static/build/build-package.sh > build-package.sh
-    - curl http://clipperapp.tk/static/build/description-pak > description-pak
-    - curl http://clipperapp.tk/static/build/dbupload.py > dbupload.py
+    - wget http://clipperapp.tk/static/build/build-package.sh
+    - wget http://clipperapp.tk/static/build/description-pak
+    - wget http://clipperapp.tk/static/build/dbupload.py
     - sudo chmod +x build-package.sh
     - sudo chmod +x dbupload.py
     - ./build-package.sh
