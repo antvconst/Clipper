@@ -25,24 +25,31 @@ libs.path = /usr/lib
 
 INSTALLS += binary libs desktop icon
 }
-win32{
+
+win32 {
 RC_FILE = misc/icon.rc
 }
 
-SOURCES += main.cpp\
-           clipper.cpp \
-           libs/json/json.cpp \
-    clipperapis.cpp \
+SOURCES += \
+    main.cpp \
+    libs/json/json.cpp \
     tnyczoptions.cpp \
     libs/qhotkeyedit/qhotkeyedit.cpp \
-    imageselectwidget.cpp
+    libs/imagecropwidget/imagecropwidget.cpp \
+    clippercore.cpp \
+    clippersettings.cpp \
+    clippernetwork.cpp \
+    clippergui.cpp
 
-HEADERS  += clipper.h \
+HEADERS  += \
     libs/json/json.h \
-    clipperapis.h \
     tnyczoptions.h \
     libs/qhotkeyedit/qhotkeyedit.h \
-    imageselectwidget.h
+    libs/imagecropwidget/imagecropwidget.h \
+    clippercore.h \
+    clippersettings.h \
+    clippernetwork.h \
+    clippergui.h
 
 RESOURCES += \
     Clipper.qrc

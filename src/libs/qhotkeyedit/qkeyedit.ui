@@ -20,7 +20,7 @@
    <string>Hotkey Selection</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../Clipper.qrc">
+   <iconset>
     <normaloff>:/icon.ico</normaloff>:/icon.ico</iconset>
   </property>
   <widget class="QWidget" name="layoutWidget">
@@ -45,6 +45,9 @@
     </item>
     <item>
      <widget class="QLineEdit" name="lineEdit">
+      <property name="frame">
+       <bool>false</bool>
+      </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
@@ -63,8 +66,6 @@
    </layout>
   </widget>
  </widget>
- <resources>
-  <include location="../Clipper.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

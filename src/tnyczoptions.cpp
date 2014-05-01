@@ -62,6 +62,15 @@ void TnyczOptions::showEvent(QShowEvent *)
 
 void TnyczOptions::returnPublishOptions()
 {
-    emit optionsReady(pasteText, ui->pasteNameEdit->text(), ui->passwordEdit->text(), is_code, is_private, is_protected);
+    TextToPublish textToPublish;
+
+    textToPublish.is_code = is_code;
+    textToPublish.is_private = is_private;
+    textToPublish.is_protected = is_protected;
+    textToPublish.text = pasteText;
+    textToPublish.password = ui->passwordEdit->text();
+    textToPublish.title = ui->pasteNameEdit->text();
+
+    emit optionsReady(textToPublish);
     this->close();
 }

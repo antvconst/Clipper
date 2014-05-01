@@ -19,8 +19,18 @@ public:
     ~TnyczOptions();
     void setPasteText(QString text);
 
+    struct TextToPublish
+    {
+        bool is_code;
+        bool is_private;
+        bool is_protected;
+        QString text;
+        QString title;
+        QString password;
+    };
+
 signals:
-    void optionsReady(QString, QString, QString, bool, bool, bool);
+    void optionsReady(TnyczOptions::TextToPublish);
     void opened(bool);
 
 private slots:
