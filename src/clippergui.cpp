@@ -4,7 +4,7 @@ ClipperGUI::ClipperGUI(ClipperCore *core, QWidget *parent) :
     QWidget(parent), ui(new Ui::Clipper), core(core)
 {
     ui->setupUi(this);
-    appIcon.addFile(":/icon.ico");
+    appIcon.addFile(":/misc/icon.ico");
 
     QRect screenGeometry = QApplication::desktop()->screenGeometry();
     int x = (screenGeometry.width()-this->width()) / 2;
