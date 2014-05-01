@@ -28,8 +28,6 @@ ClipperCore::ClipperCore(QObject *parent) :
     });
 
     this->updateSettings();
-
-    gui->show(); // DEBUG!
 }
 
 void ClipperCore::processFullScreenshot()
