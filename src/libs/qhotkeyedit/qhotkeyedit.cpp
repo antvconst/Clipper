@@ -15,6 +15,7 @@ QHotkeyEdit::QHotkeyEdit(QWidget *parent) :
 
 bool QHotkeyEdit::eventFilter(QObject *obj, QEvent *event)
 {
+    Q_UNUSED(obj);
     if (event->type() == QEvent::KeyPress)
     {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
@@ -42,15 +43,18 @@ bool QHotkeyEdit::eventFilter(QObject *obj, QEvent *event)
             ui->lineEdit->setText(textHotkey);
         }
     }
+    return true;
 }
 
 void QHotkeyEdit::closeEvent(QCloseEvent *event)
 {
+    Q_UNUSED(event);
     emit opened(false);
 }
 
-void QHotkeyEdit::showEvent(QShowEvent *)
+void QHotkeyEdit::showEvent(QShowEvent *event)
 {
+    Q_UNUSED(event);
     emit opened(true);
 }
 

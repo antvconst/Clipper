@@ -28,7 +28,7 @@ signals:
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
     void closeEvent(QCloseEvent *event);
-    void showEvent(QShowEvent *);
+    void showEvent(QShowEvent *event);
 
 private slots:
     void on_pushButton_clicked();

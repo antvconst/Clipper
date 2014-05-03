@@ -7,8 +7,8 @@ TnyczOptions::TnyczOptions(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    is_code = true;
-    is_private = true;
+    isCode = true;
+    isPrivate = true;
 
     QRect screenGeometry = QApplication::desktop()->screenGeometry();
     int x = (screenGeometry.width()-this->width()) / 2;
@@ -34,24 +34,25 @@ void TnyczOptions::setPasteText(QString text)
 }
 
 
-void TnyczOptions::on_isProtectedCheckbox_toggled(bool checked)
+void TnyczOptions::isProtectedCheckboxToggled(bool checked)
 {
     ui->passwordEdit->setEnabled(checked);
-    is_protected = checked;
+    isProtected = checked;
 }
 
-void TnyczOptions::on_isCodeCheckbox_toggled(bool checked)
+void TnyczOptions::isCodeCheckboxToggled(bool checked)
 {
-    is_code = checked;
+    isCode = checked;
 }
 
-void TnyczOptions::on_isPrivateCheckbox_toggled(bool checked)
+void TnyczOptions::isPrivateCheckboxToggled(bool checked)
 {
-    is_private = checked;
+    isPrivate = checked;
 }
 
 void TnyczOptions::closeEvent(QCloseEvent *event)
 {
+    Q_UNUSED(event);
     emit opened(false);
 }
 
@@ -64,9 +65,9 @@ void TnyczOptions::returnPublishOptions()
 {
     TextToPublish textToPublish;
 
-    textToPublish.is_code = is_code;
-    textToPublish.is_private = is_private;
-    textToPublish.is_protected = is_protected;
+    textToPublish.isCode = isCode;
+    textToPublish.isPrivate = isPrivate;
+    textToPublish.isProtected = isProtected;
     textToPublish.text = pasteText;
     textToPublish.password = ui->passwordEdit->text();
     textToPublish.title = ui->pasteNameEdit->text();

@@ -54,11 +54,11 @@ void ClipperNetwork::shareText(TnyczOptions::TextToPublish textToPublish)
     QByteArray data;
     data += "paste="+QUrl::toPercentEncoding(textToPublish.text);
     data += "&title="+QUrl::toPercentEncoding(textToPublish.title);
-    if (textToPublish.is_code)
+    if (textToPublish.isCode)
         data += "&is_code=1";
-    if (textToPublish.is_private)
+    if (textToPublish.isPrivate)
         data += "&is_private=1";
-    if (textToPublish.is_protected)
+    if (textToPublish.isProtected)
         data += "&password="+QUrl::toPercentEncoding(textToPublish.password);
 
     QNetworkReply *networkRequest = network->post(*request, data);

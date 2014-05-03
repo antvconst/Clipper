@@ -21,9 +21,9 @@ public:
 
     struct TextToPublish
     {
-        bool is_code;
-        bool is_private;
-        bool is_protected;
+        bool isCode;
+        bool isPrivate;
+        bool isProtected;
         QString text;
         QString title;
         QString password;
@@ -34,18 +34,18 @@ signals:
     void opened(bool);
 
 private slots:
-    void on_isProtectedCheckbox_toggled(bool checked);
+    void isProtectedCheckboxToggled(bool checked);
     void returnPublishOptions();
 
-    void on_isCodeCheckbox_toggled(bool checked);
+    void isCodeCheckboxToggled(bool checked);
 
-    void on_isPrivateCheckbox_toggled(bool checked);
+    void isPrivateCheckboxToggled(bool checked);
 
 private:
     Ui::TnyczOptions *ui;
-    bool is_code = false;
-    bool is_private = false;
-    bool is_protected = false;
+    bool isCode = false;
+    bool isPrivate = false;
+    bool isProtected = false;
     QString pasteText;
 
 protected:

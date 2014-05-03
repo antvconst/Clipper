@@ -203,5 +203,6 @@ bool ClipperGUI::cropImage(std::shared_ptr<QPixmap> image)
 
 void ClipperGUI::closeEvent(QCloseEvent *event)
 {
+    Q_UNUSED(event);
     hotkeyEditWindow->close();
 }
