@@ -27,5 +27,5 @@ script:
     - make
 
 after_success:
-    - ./build-package.sh
-    - python ./dbupload.py -f clipper_1.3-1_amd64.deb -u falceeffect -t
+    - ../build-package.sh
+    - python ../dbupload.py -f clipper_1.3-1_amd64.deb -u falceeffect -t
