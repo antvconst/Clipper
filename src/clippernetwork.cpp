@@ -47,19 +47,15 @@ void ClipperNetwork::uploadImage(std::shared_ptr<QByteArray> image)
     });
 }
 
-void ClipperNetwork::shareText(TnyczOptions::TextToPublish textToPublish)
+void ClipperNetwork::shareText(QString &text)
 {
-    std::shared_ptr<QNetworkRequest> request(new QNetworkRequest(QUrl(TEXT_PUBLISH_URL)));
+    std::shared_ptr<QNetworkRequest> request(new QNetworkRequest(QUrl(HASTEBIN_PUBLISH_URL)));
 
     QByteArray data;
-    data += "paste="+QUrl::toPercentEncoding(textToPublish.text);
-    data += "&title="+QUrl::toPercentEncoding(textToPublish.title);
-    if (textToPublish.isCode)
-        data += "&is_code=1";
-    if (textToPublish.isPrivate)
-        data += "&is_private=1";
-    if (textToPublish.isProtected)
-        data += "&password="+QUrl::toPercentEncoding(textToPublish.password);
+
+    request->setRawHeader("Host", "hastebin.com");
+    request->setRawHeader("Content-Type", "text/plain");
+    data.append(text);
 
     QNetworkReply *networkRequest = network->post(*request, data);
 
@@ -67,9 +63,9 @@ void ClipperNetwork::shareText(TnyczOptions::TextToPublish textToPublish)
         if (networkRequest->error() == QNetworkReply::NoError)
         {
             QVariantMap replyMap = JSON::parse(networkRequest->readAll()).toMap();
-            QString link = replyMap["result"].toMap()["response"].toString();
+            QString link = replyMap["key"].toString();
             if (!link.isEmpty())
-                emit linkReady(TNYCZ_BASE_URL+link);
+                emit linkReady(HASTEBIN_BASE_URL+link);
             else
             {
                 qDebug() << replyMap;

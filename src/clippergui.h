@@ -6,9 +6,7 @@
 
 #include "libs/qhotkeyedit/qhotkeyedit.h"
 
-#include "tnyczoptions.h"
 #include "libs/imagecropwidget/imagecropwidget.h"
-
 
 #include <memory>
 
@@ -47,7 +45,6 @@ public:
         CriticalError
     };
 
-    TnyczOptions *tnyczOptionsWindow;
     ImageCropWidget *imageCrop;
 
 public slots:

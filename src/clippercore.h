@@ -5,9 +5,7 @@
 #include "clippersettings.h"
 #include "clippernetwork.h"
 
-#include "tnyczoptions.h"
-
-#include "UGlobalHotkey/uglobalhotkeys.h"
+#include "libs/UGlobalHotkey/uglobalhotkeys.h"
 
 #include <memory>
 

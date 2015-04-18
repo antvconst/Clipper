@@ -33,7 +33,6 @@ RC_FILE = misc/icon.rc
 SOURCES += \
     main.cpp \
     libs/json/json.cpp \
-    tnyczoptions.cpp \
     libs/qhotkeyedit/qhotkeyedit.cpp \
     libs/imagecropwidget/imagecropwidget.cpp \
     clippercore.cpp \
@@ -43,7 +42,6 @@ SOURCES += \
 
 HEADERS  += \
     libs/json/json.h \
-    tnyczoptions.h \
     libs/qhotkeyedit/qhotkeyedit.h \
     libs/imagecropwidget/imagecropwidget.h \
     clippercore.h \

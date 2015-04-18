@@ -78,17 +78,10 @@ void ClipperCore::processQRCode()
 
 void ClipperCore::processTextSharing()
 {
-    if (gui->tnyczOptionsWindow->isVisible())
-        return;
-
     QString clipboardContent = getClipboardText();
     if (!clipboardContent.isEmpty())
     {
-        gui->tnyczOptionsWindow->show();
-        gui->tnyczOptionsWindow->setPasteText(clipboardContent);
-
-        connect(gui->tnyczOptionsWindow, SIGNAL(optionsReady(TnyczOptions::TextToPublish)),
-                network, SLOT(shareText(TnyczOptions::TextToPublish)), Qt::UniqueConnection);
+        network->shareText(clipboardContent);
     }
     else
         gui->showTrayMessage(ClipperGUI::Error, ERROR_CLIPBOARD_IS_EMPTY);

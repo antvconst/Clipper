@@ -14,7 +14,6 @@ ClipperGUI::ClipperGUI(ClipperCore *core, QWidget *parent) :
     this->setWindowIcon(appIcon);
     this->hide();
 
-    tnyczOptionsWindow = new TnyczOptions;
     hotkeyEditWindow = new QHotkeyEdit;
 
     QMenu *trayMenu = new QMenu();

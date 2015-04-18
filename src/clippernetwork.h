@@ -16,7 +16,6 @@
 #include <QDebug>
 
 #include "libs/json/json.h"
-#include "tnyczoptions.h"
 
 class ClipperNetwork : public QObject
 {
@@ -33,7 +32,7 @@ public slots:
     void uploadImage(std::shared_ptr<QByteArray> image);
     void shortenLink(QString link);
     void convertToQRCode(QString text);
-    void shareText(TnyczOptions::TextToPublish textToPublish);
+    void shareText(QString& text);
 
 private:
     QNetworkAccessManager *network;
@@ -43,11 +42,11 @@ private:
     ClipperNetwork& operator=(const ClipperNetwork&);
 
     const QString IMAGE_UPLOAD_URL = "http://deviantsart.com/";
-    const QString TNYCZ_BASE_URL = "http://tny.cz/";
-    const QString TEXT_PUBLISH_URL = "http://tny.cz/api/create.json";
-    const QString LINK_SHORTEN_URL = "https://www.googleapis.com/urlshortener/v1/url";
+    const QString HASTEBIN_BASE_URL = "http://hastebin.com/";
+    const QString HASTEBIN_PUBLISH_URL = "http://hastebin.com/documents";
+    const QString LINK_SHORTEN_URL = "https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyDLjDEjx-58W3BTgtopwpqH5cLjd3TgLvI";
     const QString QR_CODE_URL = "http://qrickit.com/api/qr";
-    const QString UNKNOWN_ERROR = "Unknown error uccured";
+    const QString UNKNOWN_ERROR = "Unknown error occured";
 
 signals:
     void linkReady(QString link);
