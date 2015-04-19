@@ -3,12 +3,7 @@
 BUILD_DIR=$PWD
 BASEDIR=$(dirname $0)
 
-if [ "$1" = "travis" ]
-then
-	QMAKE="qmake -qt=qt5"
-else
-	QMAKE="qmake"
-fi
+QMake = "qmake"
 
 echo "Preparing to build Clipper"
 echo "Building UGlobalHotkey library"

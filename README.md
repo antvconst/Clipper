@@ -1,16 +1,12 @@
 #Clipper
 
-[![Build Status](https://travis-ci.org/falceeffect/Clipper.png?branch=master)](https://travis-ci.org/falceeffect/Clipper)
-
 ###Features:
 
-* Making and uploading screenshots (fullscreen or partial) with only one key-press (using Imageshack.us API).
-   Screenshots can be saved as files in provided directory.
-* Shortening links (using Google Link Shortener API - goo.gl).
-* Rapid text/code publishing with ability to set a password on your paste (using tny.cz API).
-* Quick QR code creating from any text including URLs (using QRickit QR Code API).
-* Multiple text copying, which will be automerged and placed into clipboard.
-* Tracking and logging clipboard history.
+* Making and uploading screenshots via [deviantsart](deviantsart.com)
+* Shortening links with [Google URL Shortener](goo.gl)
+* Rapid code publishing with [Hastebin](hastebin.com)
+* Quick QR code creation with [QRickit](http://qrickit.com/)
+* Tracking and logging clipboard history
 
 ###Platforms:
 
