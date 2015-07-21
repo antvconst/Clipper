@@ -53,7 +53,6 @@ RESOURCES += \
     Clipper.qrc
 
 FORMS += \
-    tnyczoptions.ui \
     clipper.ui \
     libs/qhotkeyedit/qkeyedit.ui
 
